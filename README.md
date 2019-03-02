@@ -26,8 +26,8 @@ Tools used for development go here.
 
 ## Authors
 
-* **Palak Chugh** - [Githubaccount](https://github.com/)
-* **Yukti Desai** - [Githubaccount](https://github.com/)
+* **Palak Chugh** - [Githubaccount](https://github.com/pchugh1)
+* **Yukti Desai** - [Githubaccount](https://github.com/yrdesai)
 * **Bharat Goel** - [Githubaccount](https://github.com/)
 * **Madhukar Raj** - [Githubaccount](https://github.com/maddymz)
 
