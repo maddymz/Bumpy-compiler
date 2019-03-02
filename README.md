@@ -6,19 +6,20 @@ This repository is for the group project of SER502.
 Information about the system on which the compiler and runtime is built goes here.
 
 ```
-Give examples
+Examples
 ```
 
 ### Instructions for Installation
 
 Direction and instructions to install the language go here.
+
 ```
-Examples go here
+Examples 
 ```
 
 ## Directions to build and run 
-* One line bash script to build teh compiler
-* One line script to run teh runtime.
+* One line bash script to build the compiler
+* One line script to run the runtime.
 
 ## Tools Used
 Tools used for development go here.
@@ -30,8 +31,6 @@ Tools used for development go here.
 * **Bharat Goel** - [Githubaccount](https://github.com/)
 * **Madhukar Raj** - [Githubaccount](https://github.com/maddymz)
 
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 ## Link to youtube video
 
