@@ -28,7 +28,7 @@ Tools used for development go here.
 
 * **Palak Chugh** - [Githubaccount](https://github.com/pchugh1)
 * **Yukti Desai** - [Githubaccount](https://github.com/yrdesai)
-* **Bharat Goel** - [Githubaccount](https://github.com/)
+* **Bharat Goel** - [Githubaccount](https://github.com/BharatG295)
 * **Madhukar Raj** - [Githubaccount](https://github.com/maddymz)
 
 
