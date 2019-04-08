@@ -1,4 +1,13 @@
-Madhukar: 
-Yuti:
-Palak:
-Bharat:
+
+Milestone 2: Name, Design and Grammar: All participants equally contributed for the milestone 2 and defined 
+grammar the language by discussions and brain storming.
+
+Participants : Madhukar Raj, Yuti Desai, Palak Chugh, Bharat Goel.
+
+Milestone 3: Final Project Submission: We have discussed, researched and have come to the decision to divide 
+the work like below:
+
+lexical analyzer, parser : Yuti Desai and Palak Chugh
+
+Intermediate code generator, and runtime environment: Madhukar Raj, Bharat Goel
+
