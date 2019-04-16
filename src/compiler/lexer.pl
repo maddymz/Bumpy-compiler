@@ -7,7 +7,6 @@ tokens(Z) --> "do", tokens(Y), {Z = [do | Y]}.
 tokens(Z) --> "otherwise", tokens(Y), {Z = [otherwise | Y]}.
 tokens(Z) --> "endcase", tokens(Y), {Z = [endcase | Y]}.
 tokens(Z) --> "end", tokens(Y), {Z = [end | Y]}.
-tokens(Z) --> "other", tokens(Y), {Z = [other | Y]}.
 
 % comment symbol
 tokens(Z) --> "@", tokens(Y), {Z = [@ | Y]}.
@@ -25,6 +24,7 @@ tokens(Z) --> "+", tokens(Y), {Z = [+ | Y]}.
 tokens(Z) --> "-", tokens(Y), {Z = [- | Y]}.
 tokens(Z) --> "*", tokens(Y), {Z = [* | Y]}.
 tokens(Z) --> "/", tokens(Y), {Z = [/ | Y]}.
+tokens(Z) --> "mod", tokens(Y), {Z = [mod | Y]}.
 
 % Assignment operator.
 tokens(Z) --> "=", tokens(Y), {Z = [= | Y]}.  
@@ -41,9 +41,11 @@ tokens(Z) --> "or", tokens(Y), {Z = [or | Y]}.
 
 % Strip spaces, tabs and newlines.
 tokens(Z) --> " ", tokens(Y), {Z = Y}.
-tokens(Z) --> "	", tokens(Y), {Z = Y}.
+tokens(Z) --> "\t", tokens(Y), {Z = Y}.
+tokens(Z) --> "\n", tokens(Y), {Z = Y}.
 
 % Anything not mentioned above gets its own token,
 % including single-character identifiers.
 tokens(Z) --> [C], tokens(Y), {name(X, [C]), Z = [X | Y]}.
 tokens(Z) --> [], {Z = []}.
+
