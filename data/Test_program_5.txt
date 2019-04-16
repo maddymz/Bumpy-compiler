@@ -1,0 +1,17 @@
+@ test program 5 @
+start 
+    var a;
+    var b;
+    var c;
+
+    incase a ~= b;
+        do 
+            a = a + 1;
+            when a :=: b;
+                repeat
+                    a = a + 1;
+                    when a :=: c;
+                        b = a;
+                endrepeat
+    endcase
+end 

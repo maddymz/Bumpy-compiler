@@ -1,0 +1,6 @@
+@ test program 1 @
+start 
+    var a;
+    a = 5;
+end
+

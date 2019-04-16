@@ -1,23 +1,51 @@
-program --> comment, block.
-comment --> [@],words,[@] ; [].
-words --> identifier, words ; numb, words ; identifier; numb.
-block --> [start], declaration, process, [end].
-declaration --> [var], identifier, [;], declaration ; [bool], identifier, [;] ,declaration;
-    [var], identifier; [bool], identifier.
-process --> assignvalue, [;], process; control, [;], process; iterate, [;], process;
-    assignvalue ;control ;iterate.
-assignvalue --> identifier, [=] ,expression; identifier, [is], boolexp.
-control --> [incase], condition, [do], process, [otherwise], process, [endcase].
-iterate --> [when], condition, [repeat], process, [endrepeat].
-condition --> boolexp, [and], boolexp; boolexp, [or], boolexp; [~], boolexp; boolexp.
-boolexp --> expression, [:=:], expression; expression, [~=], expression; 
-    expression, [<=], expression; expression, [>=], expression; expression, [<], expression;
-    expression, [>], expression; [yes]; [no].
-expression --> term,[+],expression; term,[-],expression; term.
-term --> identifier,[*],term; numb,[*],term; identifier,[/],term; numb,[/],term;
-    identifier,[mod],term; numb,[mod],term; identifier; numb.
-%identifier --> [a],identifier;[b],identifier;[c],identifier;[d],identifier;[e],identifier;[f],identifier;[g],identifier;[h],identifier;[i],identifier;[j],identifier;[k],identifier;[l],identifier;[m],identifier;[n],identifier;[o],identifier;[p],identifier;[q],identifier;[r],identifier;[s],identifier;[t],identifier;[u],identifier;[v],identifier;[w],identifier;[x],identifier;[y],identifier;[z],identifier.
-identifier -->[a];[b];[c];[d];[e];[f];[g];[h];[i];[j];[k];[l];[m];[n];[o];[p];[q];[r];[s];[t];[u];[v];[w];[x];[y];[z].
-numb --> digit;digit, numb;digit, numb,[.],digit;
-    digit,[.],digit.
-digit --> [0];[1];[2];[3];[4];[5];[6];[7];[8];[9].
+tokens(Z) --> "start", tokens(Y), {Z = [start | Y]}.
+tokens(Z) --> "when", tokens(Y), {Z = [when | Y]}.
+tokens(Z) --> "repeat", tokens(Y), {Z = [repeat | Y]}.
+tokens(Z) --> "endrepeat", tokens(Y), {Z = [endrepeat | Y]}.
+tokens(Z) --> "incase", tokens(Y), {Z = [incase | Y]}.
+tokens(Z) --> "do", tokens(Y), {Z = [do | Y]}.
+tokens(Z) --> "otherwise", tokens(Y), {Z = [otherwise | Y]}.
+tokens(Z) --> "endcase", tokens(Y), {Z = [endcase | Y]}.
+tokens(Z) --> "end", tokens(Y), {Z = [end | Y]}.
+
+% comment symbol
+tokens(Z) --> "@", tokens(Y), {Z = [@ | Y]}.
+
+% Boolean constants and operators.
+tokens(Z) --> "yes", tokens(Y), {Z = [yes | Y]}.  
+tokens(Z) --> "no", tokens(Y), {Z = [no | Y]}.  
+tokens(Z) --> "and", tokens(Y), {Z = [and | Y]}.  
+tokens(Z) --> "or", tokens(Y), {Z = [or | Y]}.  
+
+% Comparison operators.
+tokens(Z) --> ":=:", tokens(Y), {Z = [:=: | Y]}.
+tokens(Z) --> "~=", tokens(Y), {Z = [~= | Y]}.
+tokens(Z) --> ">", tokens(Y), {Z = [> | Y]}.
+tokens(Z) --> "<", tokens(Y), {Z = [< | Y]}.
+tokens(Z) --> "<=", tokens(Y), {Z = [<= | Y]}.
+tokens(Z) --> ">=", tokens(Y), {Z = [=> | Y]}.
+
+% Arithmetic operators.
+tokens(Z) --> "+", tokens(Y), {Z = [+ | Y]}.
+tokens(Z) --> "-", tokens(Y), {Z = [- | Y]}.
+tokens(Z) --> "*", tokens(Y), {Z = [* | Y]}.
+tokens(Z) --> "/", tokens(Y), {Z = [/ | Y]}.
+tokens(Z) --> "mod", tokens(Y), {Z = [mod | Y]}.
+
+% Assignment operator and end of the assignment statement
+tokens(Z) --> "=", tokens(Y), {Z = [= | Y]}.  
+tokens(Z) --> ";", tokens(Y), {Z = [; | Y]}.
+
+% primitive types.
+tokens(Z) --> "var", tokens(Y), {Z = [var | Y]}.
+tokens(Z) --> "bool", tokens(Y), {Z = [bool | Y]}.
+
+% spaces, tabs and newlines.
+tokens(Z) --> " ", tokens(Y), {Z = Y}.
+tokens(Z) --> "\t", tokens(Y), {Z = Y}.
+tokens(Z) --> "\n", tokens(Y), {Z = Y}.
+
+% Not mentioned above gets its own token
+tokens(Z) --> [C], tokens(Y), {name(X, [C]), Z = [X | Y]}.
+tokens(Z) --> [], {Z = []}.
+

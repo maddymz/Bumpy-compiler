@@ -1,0 +1,17 @@
+@ test program 2 @
+start 
+    var a;
+    var b;
+    var c;
+    a=3;
+    b=4;
+    bool q;
+    q is no
+
+    incase q :=: no
+     do
+        c = a - b;
+     otherwise
+        c = a * b;
+    endcase
+end
