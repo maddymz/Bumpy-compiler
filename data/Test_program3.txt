@@ -1,0 +1,11 @@
+@ Test program 3 @.
+
+start
+    var n;
+    var i;
+
+    when yes
+        repeat 
+            n = n + 1;
+        endrepeat
+end
