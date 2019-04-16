@@ -1,4 +1,4 @@
-@ Test program 4 @.
+@ test program 4 @
 
 start 
     var p;

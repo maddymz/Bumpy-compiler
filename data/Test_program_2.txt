@@ -1,4 +1,4 @@
-@ Test program 2 @.
+@ test program 2 @
 start 
     var a;
     var b;
@@ -6,9 +6,9 @@ start
     a=3;
     b=4;
     bool q;
-    q is no.
+    q is no
 
-    incase q :=: no.
+    incase q :=: no
      do
         c = a - b;
      otherwise

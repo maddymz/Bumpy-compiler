@@ -1,6 +1,6 @@
-@ Test program 1 @.
+@ test program 1 @
 start 
     var a;
     a = 5;
-end.
+end
 
