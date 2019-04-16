@@ -23,7 +23,7 @@ tokens(Z) --> "~=", tokens(Y), {Z = [~= | Y]}.
 tokens(Z) --> ">", tokens(Y), {Z = [> | Y]}.
 tokens(Z) --> "<", tokens(Y), {Z = [< | Y]}.
 tokens(Z) --> "<=", tokens(Y), {Z = [<= | Y]}.
-tokens(Z) --> ">=", tokens(Y), {Z = [=> | Y]}.
+tokens(Z) --> ">=", tokens(Y), {Z = [>= | Y]}.
 
 % Arithmetic operators.
 tokens(Z) --> "+", tokens(Y), {Z = [+ | Y]}.
