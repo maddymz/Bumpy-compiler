@@ -16,7 +16,7 @@ boolexp --> expression, [:=:], expression; expression, [~=], expression;
 expression --> term,[+],expression; term,[-],expression; term.
 term --> identifier,[*],term; numb,[*],term; identifier,[/],term; numb,[/],term;
     identifier,[mod],term; numb,[mod],term; identifier; numb.
-identifier --> [a],identifier;[b],identifier;[c],identifier;[d],identifier;[e],identifier;[f],identifier;[g],identifier;[h],identifier;[i],identifier;[j],identifier;[k],identifier;[l],identifier;[m],identifier;[n],identifier;[o],identifier;[p],identifier;[q],identifier;[r],identifier;[s],identifier;[t],identifier;[u],identifier;[v],identifier;[w],identifier;[x],identifier;[y],identifier;[z],identifier.
+%identifier --> [a],identifier;[b],identifier;[c],identifier;[d],identifier;[e],identifier;[f],identifier;[g],identifier;[h],identifier;[i],identifier;[j],identifier;[k],identifier;[l],identifier;[m],identifier;[n],identifier;[o],identifier;[p],identifier;[q],identifier;[r],identifier;[s],identifier;[t],identifier;[u],identifier;[v],identifier;[w],identifier;[x],identifier;[y],identifier;[z],identifier.
 identifier -->[a];[b];[c];[d];[e];[f];[g];[h];[i];[j];[k];[l];[m];[n];[o];[p];[q];[r];[s];[t];[u];[v];[w];[x];[y];[z].
 numb --> digit;digit, numb;digit, numb,[.],digit;
     digit,[.],digit.
