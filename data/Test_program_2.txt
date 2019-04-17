@@ -6,7 +6,7 @@ start
     bool q;
     a=3;
     b=4;
-    q is no
+    q is no;
 
     incase q :=: no
      do
