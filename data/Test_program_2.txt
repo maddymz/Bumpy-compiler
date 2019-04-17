@@ -3,9 +3,9 @@ start
     var a;
     var b;
     var c;
+    bool q;
     a=3;
     b=4;
-    bool q;
     q is no
 
     incase q :=: no
