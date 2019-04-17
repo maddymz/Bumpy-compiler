@@ -6,7 +6,7 @@ start
     p = 3;
     q = 2;
 
-    incase p ~= q;
+    incase p ~= q
         do 
             p = q;
         otherwise
