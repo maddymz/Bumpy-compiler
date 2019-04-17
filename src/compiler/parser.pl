@@ -25,7 +25,7 @@ condition(t_cond(X)) -->[~], boolexp(X); boolexp(X).
 
 boolexp(t_boolexp(X,Y)) --> expression(X), [:=:], expression(Y); expression(X), [~=], expression(Y); 
     expression(X), [<=], expression(Y); expression(X), [>=], expression(Y); expression(X), [<], expression(Y);
-    expression(X), [>], expression(Y). 
+    expression(X), [>], expression(Y); expression(X), [:=:], boolexp(Y); expression(X), [~=], boolexp(Y). 
 boolexp(t_boolexp(yes)) --> [yes].
 boolexp(t_boolexp(no)) --> [no].
 
