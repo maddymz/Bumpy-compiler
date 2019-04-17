@@ -8,7 +8,7 @@ tokens(Z) --> "otherwise", tokens(Y), {Z = [otherwise | Y]}.
 tokens(Z) --> "endcase", tokens(Y), {Z = [endcase | Y]}.
 tokens(Z) --> "end", tokens(Y), {Z = [end | Y]}.
 
-% comment symbol
+% Comments
 tokens(Z) --> "@", tokens(Y), {Z = [@ | Y]}.
 
 % Boolean constants and operators.
@@ -32,11 +32,12 @@ tokens(Z) --> "*", tokens(Y), {Z = [* | Y]}.
 tokens(Z) --> "/", tokens(Y), {Z = [/ | Y]}.
 tokens(Z) --> "mod", tokens(Y), {Z = [mod | Y]}.
 
-% Assignment operator and end of the assignment statement
-tokens(Z) --> "=", tokens(Y), {Z = [= | Y]}.  
+% Assignment operators and end of the assignment/declaration statement
+tokens(Z) --> "=", tokens(Y), {Z = [= | Y]}.
+tokens(Z) --> "is", tokens(Y), {Z = [is | Y]}.  
 tokens(Z) --> ";", tokens(Y), {Z = [; | Y]}.
 
-% primitive types.
+% data types.
 tokens(Z) --> "var", tokens(Y), {Z = [var | Y]}.
 tokens(Z) --> "bool", tokens(Y), {Z = [bool | Y]}.
 
