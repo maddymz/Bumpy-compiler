@@ -12,5 +12,5 @@ start
         otherwise
             p = p - q;
     endcase
-end
+stop
 
