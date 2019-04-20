@@ -1,52 +1,69 @@
-tokens(Z) --> "start", tokens(Y), {Z = [start | Y]}.
-tokens(Z) --> "when", tokens(Y), {Z = [when | Y]}.
-tokens(Z) --> "repeat", tokens(Y), {Z = [repeat | Y]}.
-tokens(Z) --> "endrepeat", tokens(Y), {Z = [endrepeat | Y]}.
-tokens(Z) --> "incase", tokens(Y), {Z = [incase | Y]}.
-tokens(Z) --> "do", tokens(Y), {Z = [do | Y]}.
-tokens(Z) --> "otherwise", tokens(Y), {Z = [otherwise | Y]}.
-tokens(Z) --> "endcase", tokens(Y), {Z = [endcase | Y]}.
-tokens(Z) --> "end", tokens(Y), {Z = [end | Y]}.
+lexer(Tokens) -->
+    white_space,
+    (   ( ";",  !, { Token = ; };  
+        "@",  !, { Token = @ };  
+        "start",  !, { Token = start };
+        "stop",  !, { Token = stop };
+        "when",  !, { Token = when };
+        "repeat",  !, { Token = repeat };
+        "endrepeat",  !, { Token = endrepeat };
+        "incase",  !, { Token = incase };
+        "do",  !, { Token = do };
+        "otherwise",  !, { Token = otherwise };  
+        "endcase",  !, { Token = endcase };
+        "yes",  !, { Token = yes };
+        "no",  !, { Token = no };
+        "and",  !, { Token = and };
+        "or",  !, { Token = or };
+        "var",  !, { Token = var };
+        "bool",  !, { Token = bool };
+        ">",  !, { Token = > };
+        "<",  !, { Token = < };
+        "<=", !, { Token = <= };
+        ">=", !, { Token = >= };
+        "=",  !, { Token = =  };
+        "is",  !, { Token = is  };
+        ":=:",  !, { Token = :=:  };
+        "~=", !, { Token = ~= };
+        "+",  !, { Token = +  };
+        "-",  !, { Token = -  };
+        "*",  !, { Token = *  };
+        "/", !, { Token = /  };
+        "mod", !, { Token = mod  };  
+        digit(D),  !, number(D, N), { Token = N };
+        lowletter(L), !, identifier(L, Id),{  Token = Id};
+        upletter(L), !, identifier(L, Id), { Token = Id };
+        [Un], { Token = tkUnknown, throw((unrecognized_token, Un)) }),!,
+        { Tokens = [Token | TokList] },lexer(TokList);  
+    	  [],{ Tokens = [] }).
 
-% Comments
-tokens(Z) --> "@", tokens(Y), {Z = [@ | Y]}.
+white_space --> [Char], { code_type(Char,space) }, !, white_space.
+white_space --> [].
 
-% Boolean constants and operators.
-tokens(Z) --> "yes", tokens(Y), {Z = [yes | Y]}.  
-tokens(Z) --> "no", tokens(Y), {Z = [no | Y]}.  
-tokens(Z) --> "and", tokens(Y), {Z = [and | Y]}.  
-tokens(Z) --> "or", tokens(Y), {Z = [or | Y]}.  
+digit(D) --> [D],{ code_type(D, digit) }.
+digits([D|T]) --> digit(D),!,digits(T).
+digits([]) -->[].
 
-% Comparison operators.
-tokens(Z) --> ":=:", tokens(Y), {Z = [:=: | Y]}.
-tokens(Z) --> "~=", tokens(Y), {Z = [~= | Y]}.
-tokens(Z) --> ">", tokens(Y), {Z = [> | Y]}.
-tokens(Z) --> "<", tokens(Y), {Z = [< | Y]}.
-tokens(Z) --> "<=", tokens(Y), {Z = [<= | Y]}.
-tokens(Z) --> ">=", tokens(Y), {Z = [>= | Y]}.
+number(D, N) --> digits(Ds),{ number_chars(N, [D|Ds]) }.
 
-% Arithmetic operators.
-tokens(Z) --> "+", tokens(Y), {Z = [+ | Y]}.
-tokens(Z) --> "-", tokens(Y), {Z = [- | Y]}.
-tokens(Z) --> "*", tokens(Y), {Z = [* | Y]}.
-tokens(Z) --> "/", tokens(Y), {Z = [/ | Y]}.
-tokens(Z) --> "mod", tokens(Y), {Z = [mod | Y]}.
+upletter(L) -->[L], { code_type(L, upper) }.
 
-% Assignment operators and end of the assignment/declaration statement
-tokens(Z) --> "=", tokens(Y), {Z = [= | Y]}.
-tokens(Z) --> "is", tokens(Y), {Z = [is | Y]}.  
-tokens(Z) --> ";", tokens(Y), {Z = [; | Y]}.
+lowletter(L) -->[L], { code_type(L, lower) }.
 
-% data types.
-tokens(Z) --> "var", tokens(Y), {Z = [var | Y]}.
-tokens(Z) --> "bool", tokens(Y), {Z = [bool | Y]}.
+alphanum([A|T]) -->[A], { code_type(A, csym) }, !, alphanum(T).
+alphanum([]) -->[].
 
-% spaces, tabs and newlines.
-tokens(Z) --> " ", tokens(Y), {Z = Y}.
-tokens(Z) --> "\t", tokens(Y), {Z = Y}.
-tokens(Z) --> "\n", tokens(Y), {Z = Y}.
+identifier(L, Id) -->alphanum(As),{ atom_codes(Id, [L|As]) }.
 
-% Not mentioned above gets its own token
-tokens(Z) --> [C], tokens(Y), {name(X, [C]), Z = [X | Y]}.
-tokens(Z) --> [], {Z = []}.
+
+
+% ?- phrase(lexer(T),`@ test program 3 @
+%start
+%    var n;
+%    var i;
+%    when yes
+%        repeat 
+%            n = n + 1;
+%        endrepeat
+%stop`).
 
