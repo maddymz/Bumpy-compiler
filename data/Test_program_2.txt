@@ -14,4 +14,4 @@ start
      otherwise
         c = a * b;
     endcase
-end
+stop
