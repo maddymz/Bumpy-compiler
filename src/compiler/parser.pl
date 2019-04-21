@@ -43,9 +43,9 @@ term(t_term(X,Y)) --> identifier(X),[*],term(Y);
                     numb(X),[mod],term(Y).
 term(t_term(X)) -->identifier(X); numb(X); numbneg(X).
 
-identifier(H,[H|T],T):-
-    string_chars(H,[Fc|Rc]),(is_alpha(Fc);H='_'),
-    forall(member(R,Rc),(is_alnum(R)); R = '_').
+identifier(t_identifier(X)) -->[X], 
+    {string_chars(X,[Fc|Rc])},{(is_alpha(Fc);X='_')},
+    {forall(member(R,Rc),(is_alnum(R)); R = '_')}.
 
 numb(t_numb(X)) --> [X],{number(X)}.
 
