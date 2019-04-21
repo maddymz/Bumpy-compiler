@@ -1,17 +1,17 @@
 @ test program 2 @
 start 
-    var a;
-    var b;
+    var auro;
+    var b11;
     var c;
     bool q;
-    a=3;
-    b=4;
+    auro=3;
+    b11=4;
     q is no;
 
     incase q :=: no
      do
-        c = a - b;
+        c = auro - b11;
      otherwise
-        c = a * b;
+        c = auro * b11;
     endcase
 stop
