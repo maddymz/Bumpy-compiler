@@ -4,7 +4,7 @@ start
     var p;
     var q;
     p = 3;
-    q = 2;
+    q = -2;
 
     incase p ~= q
         do 
