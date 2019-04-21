@@ -32,8 +32,15 @@ boolexp(t_boolexp(no)) --> [no].
 expression(t_expr(X,Y)) --> term(X),[+],expression(Y); term(X),[-],expression(Y).
 expression(t_expr(X)) --> term(X).
 
-term(t_term(X,Y)) --> identifier(X),[*],term(Y); numb(X),[*],term(Y); identifier(X),[/],term(Y); numb(X),[/],term(Y);
-    identifier(X),[mod],term(Y); numb(X),[mod],term(Y).
+term(t_term(X,Y)) --> identifier(X),[*],term(Y); 
+                    numb(X),[*],term(Y);
+                    numbneg(X),[*], term(Y);
+                    identifier(X),[/],term(Y);
+                    numb(X),[/],term(Y);
+                    numbneg(X),[/], term(Y);
+                    identifier(X),[mod],term(Y);
+                    numb(X),[mod],term(Y).
+                    numbneg(X),[mod], term(Y);
 term(t_term(X)) -->identifier(X); numb(X).
 
 identifier(H,[H|T],T):-
