@@ -7,7 +7,7 @@ bumpy(FileName) :- open(FileName, read, InStream),
 		   L = [H|_T],
 		   atom_concat(H, ".ic", X),
 		   open(X, write, OutStream),
-		   write(OutStream, Tokens),
+		   write(OutStream, ParseTree),
 		   write(OutStream, '.'),
 close(OutStream).
 
