@@ -47,23 +47,6 @@ identifier(H,[H|T],T):-
     string_chars(H,[Fc|Rc]),(is_alpha(Fc);H='_'),
     forall(member(R,Rc),(is_alnum(R)); R = '_').
 
-numb(t_numb(X)) --> digit(X).
-numb(t_numb(X,Y)) -->digit(X), numb(Y).
-numb(t_numb(X,Y,Z)) -->digit(X), numb(Y),[.],digit(Z).
-numb(t_numb(X,Y)) -->digit(X),[.],digit(Y).
+numb(t_numb(X)) --> [X],{number(X)}.
 
-numbneg(t_numb(X)) --> [-],digit(X).
-numbneg(t_numb(X,Y)) -->[-],digit(X), numb(Y).
-numbneg(t_numb(X,Y,Z)) -->[-],digit(X), numb(Y),[.],digit(Z).
-numbneg(t_numb(X,Y)) -->[-],digit(X),[.],digit(Y).
-
-digit(t_digit(0)) -->[0].
-digit(t_digit(1)) -->[1].
-digit(t_digit(2)) -->[2].
-digit(t_digit(3)) -->[3].
-digit(t_digit(4)) -->[4].
-digit(t_digit(5)) -->[5].
-digit(t_digit(6)) -->[6].
-digit(t_digit(7)) -->[7].
-digit(t_digit(8)) -->[8].
-digit(t_digit(9)) -->[9].
+numbneg(t_numbneg(X)) --> [-],numb(X).
