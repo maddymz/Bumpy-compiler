@@ -45,6 +45,11 @@ numb(t_numb(X,Y)) -->digit(X), numb(Y).
 numb(t_numb(X,Y,Z)) -->digit(X), numb(Y),[.],digit(Z).
 numb(t_numb(X,Y)) -->digit(X),[.],digit(Y).
 
+numbneg(t_numb(X)) --> [-],digit(X).
+numbneg(t_numb(X,Y)) -->[-],digit(X), numb(Y).
+numbneg(t_numb(X,Y,Z)) -->[-],digit(X), numb(Y),[.],digit(Z).
+numbneg(t_numb(X,Y)) -->[-],digit(X),[.],digit(Y).
+
 digit(t_digit(0)) -->[0].
 digit(t_digit(1)) -->[1].
 digit(t_digit(2)) -->[2].
