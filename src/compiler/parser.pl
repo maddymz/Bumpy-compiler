@@ -39,9 +39,9 @@ term(t_term(X,Y)) --> identifier(X),[*],term(Y);
                     numb(X),[/],term(Y);
                     numbneg(X),[/], term(Y);
                     identifier(X),[mod],term(Y);
-                    numb(X),[mod],term(Y).
                     numbneg(X),[mod], term(Y);
-term(t_term(X)) -->identifier(X); numb(X).
+                    numb(X),[mod],term(Y).
+term(t_term(X)) -->identifier(X); numb(X); numbneg(X).
 
 identifier(H,[H|T],T):-
     string_chars(H,[Fc|Rc]),(is_alpha(Fc);H='_'),
