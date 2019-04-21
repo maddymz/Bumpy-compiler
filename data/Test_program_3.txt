@@ -1,11 +1,12 @@
 @ test program 3 @
 
 start
-    var n;
+    var num;
     var i;
+    var num = 0;
 
     when yes
         repeat 
-            n = n + 1;
+            num = num + 1;
         endrepeat
 stop
