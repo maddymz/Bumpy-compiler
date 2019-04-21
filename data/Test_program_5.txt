@@ -1,17 +1,17 @@
 @ test program 5 @
 start 
-    var a;
-    var b;
-    var c;
+    var anum;
+    var bnum;
+    var cnum;
 
-    incase a ~= b;
+    incase anum ~= bnum;
         do 
-            a = a + 1;
-            when a :=: b;
+            anum = anum + 1;
+            when anum :=: bnum;
                 repeat
-                    a = a + 1;
-                    when a :=: c;
-                        b = a;
+                    anum = anum + 1;
+                    when anum :=: cnum;
+                        bnum = anum;
                 endrepeat
     endcase
 stop 
