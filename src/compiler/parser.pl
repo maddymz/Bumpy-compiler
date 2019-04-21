@@ -6,7 +6,7 @@ comment(t_comment(Y)) --> [@],words(Y),[@].
 words(t_words(X,Y)) --> identifier(X), words(Y) ; numb(X), words(Y).
 words(t_words(X)) -->identifier(X); numb(X).
 
-block(t_block(X,Y)) --> [start], declaration(X), process(Y), [end].
+block(t_block(X,Y)) --> [start], declaration(X), process(Y), [stop].
 
 declaration(t_declare(X,Y)) --> [var], identifier(X), [;], declaration(Y) ; [bool], identifier(X), [;] ,declaration(Y).    
 declaration(t_declare(X)) -->[var], identifier(X),[;]; [bool], identifier(X),[;].
