@@ -36,33 +36,9 @@ term(t_term(X,Y)) --> identifier(X),[*],term(Y); numb(X),[*],term(Y); identifier
     identifier(X),[mod],term(Y); numb(X),[mod],term(Y).
 term(t_term(X)) -->identifier(X); numb(X).
 
-%identifier --> [a],identifier;[b],identifier;[c],identifier;[d],identifier;[e],identifier;[f],identifier;[g],identifier;[h],identifier;[i],identifier;[j],identifier;[k],identifier;[l],identifier;[m],identifier;[n],identifier;[o],identifier;[p],identifier;[q],identifier;[r],identifier;[s],identifier;[t],identifier;[u],identifier;[v],identifier;[w],identifier;[x],identifier;[y],identifier;[z],identifier.
-identifier(t_identifier(a)) -->[a].
-identifier(t_identifier(b)) -->[b].
-identifier(t_identifier(c)) -->[c].
-identifier(t_identifier(d)) -->[d].
-identifier(t_identifier(e)) -->[e].
-identifier(t_identifier(f)) -->[f].
-identifier(t_identifier(g)) -->[g].
-identifier(t_identifier(h)) -->[h].
-identifier(t_identifier(i)) -->[i].
-identifier(t_identifier(j)) -->[j].
-identifier(t_identifier(k)) -->[k].
-identifier(t_identifier(l)) -->[l].
-identifier(t_identifier(m)) -->[m].
-identifier(t_identifier(n)) -->[n].
-identifier(t_identifier(o)) -->[o].
-identifier(t_identifier(p)) -->[p].
-identifier(t_identifier(q)) -->[q].
-identifier(t_identifier(r)) -->[r].
-identifier(t_identifier(s)) -->[s].
-identifier(t_identifier(t)) -->[t].
-identifier(t_identifier(u)) -->[u].
-identifier(t_identifier(v)) -->[v].
-identifier(t_identifier(w)) -->[w].
-identifier(t_identifier(x)) -->[x].
-identifier(t_identifier(y)) -->[y].
-identifier(t_identifier(z)) -->[z].
+identifier(H,[H|T],T):-
+    string_chars(H,[Fc|Rc]),(is_alpha(Fc);H='_'),
+    forall(member(R,Rc),(is_alnum(R)); R = '_').
 
 numb(t_numb(X)) --> digit(X).
 numb(t_numb(X,Y)) -->digit(X), numb(Y).
