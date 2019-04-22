@@ -4,13 +4,13 @@ start
     var bnum;
     var cnum;
 
-    incase anum ~= bnum;
+    incase anum ~= bnum
         do 
-            anum = anum + 1;
-            when anum :=: bnum;
+            anum = anum + 1342;
+            when anum :=: bnum
                 repeat
                     anum = anum + 1;
-                    when anum :=: cnum;
+                    when anum :=: cnum
                         bnum = anum;
                 endrepeat
     endcase
