@@ -18,5 +18,7 @@ start
                             bnum = anum;
                         endrepeat
                 endrepeat
+         otherwise
+                anum = 1;
     endcase
 stop 
