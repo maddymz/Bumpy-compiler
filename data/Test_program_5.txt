@@ -1,12 +1,15 @@
 @ test program 5 @
 start 
-    var anum = 123;
-    var bnum = 321;
-    var cnum = 0;
+    var anum;
+    var bnum;
+    var cnum;
+    anum = 123;
+    bnum = 321;
+    cnum = 0;
 
     incase anum ~= bnum
         do 
-            anum = anum + 1342;
+            anum = anum + 123;
             when anum :=: bnum
                 repeat
                     anum = anum + 1;
