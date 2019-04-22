@@ -11,7 +11,7 @@ block(t_block(X,Y)) --> [start], declaration(X), process(Y), [stop].
 datatype(t_datatype(var)) --> [var].
 datatype(t_datatype(bool)) --> [bool].
 
-declaration(t_declare(X,Y,Z)) --> datatype(X), identifier(X), [;], declaration(Z).    
+declaration(t_declare(X,Y,Z)) --> datatype(X), identifier(Y), [;], declaration(Z).    
 declaration(t_declare(X,Y)) -->datatype(X),identifier(Y),[;].
 
 process(t_process(X,Y)) --> assignvalue(X), [;], process(Y); control(X), process(Y); iterate(X), process(Y).
