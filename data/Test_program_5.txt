@@ -11,7 +11,9 @@ start
                 repeat
                     anum = anum + 1;
                     when anum :=: cnum
-                        bnum = anum;
+                        repeat
+                            bnum = anum;
+                        endrepeat
                 endrepeat
     endcase
 stop 
