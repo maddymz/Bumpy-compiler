@@ -91,8 +91,11 @@ words(t_words(X)) -->identifier(X); numb(X).
 
 block(t_block(X,Y)) --> [start], declaration(X), process(Y), [stop].
 
-declaration(t_declare(X,Y)) --> [var], identifier(X), [;], declaration(Y) ; [bool], identifier(X), [;] ,declaration(Y).    
-declaration(t_declare(X)) -->[var], identifier(X),[;]; [bool], identifier(X),[;].
+datatype(t_datatype(var)) --> [var].
+datatype(t_datatype(bool)) --> [bool].
+
+declaration(t_declare(X,Y,Z)) --> datatype(X), identifier(Y), [;], declaration(Z).    
+declaration(t_declare(X,Y)) -->datatype(X),identifier(Y),[;].
 
 process(t_process(X,Y)) --> assignvalue(X), [;], process(Y); control(X), process(Y); iterate(X), process(Y).
 process(t_process(X)) -->assignvalue(X),[;] ;control(X) ;iterate(X).
@@ -119,19 +122,14 @@ boolexp(t_boolexp_bneq(X,Y)) --> expression(X), [~=], boolexp(Y).
 boolexp(t_boolexp(yes)) --> [yes].
 boolexp(t_boolexp(no)) --> [no].
 
-expression(t_expr(X,Y)) --> term(X),[+],expression(Y); term(X),[-],expression(Y).
+expression(t_add(X,Y)) --> term(X),[+],expression(Y).
+expression(t_sub(X,Y)) --> term(X),[-],expression(Y).
 expression(t_expr(X)) --> term(X).
 
-term(t_term(X,Y)) --> identifier(X),[*],term(Y); 
-                    numb(X),[*],term(Y);
-                    numbneg(X),[*], term(Y);
-                    identifier(X),[/],term(Y);
-                    numb(X),[/],term(Y);
-                    numbneg(X),[/], term(Y);
-                    identifier(X),[mod],term(Y);
-                    numbneg(X),[mod], term(Y);
-                    numb(X),[mod],term(Y).
-term(t_term(X)) -->identifier(X); numb(X); numbneg(X).
+term(t_mul(X,Y)) --> identifier(X),[*],term(Y);numb(X),[*],term(Y);numbneg(X),[*],term(Y).
+term(t_div(X,Y)) -->identifier(X),[/],term(Y);numb(X),[/],term(Y);numbneg(X),[/],term(Y).
+term(t_mod(X,Y)) -->identifier(X),[mod],term(Y);numb(X),[mod],term(Y);numbneg(X),[mod],term(Y).
+term(t_term(X)) -->identifier(X);numb(X);numbneg(X).
 
 identifier(t_identifier(X)) -->[X], 
     {string_chars(X,[H|T])}, 
