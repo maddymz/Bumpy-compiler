@@ -1,10 +1,11 @@
 evalProgram(t_program(X, Y), EnvIn, EnvOut) :-evalComment(X, EnvIn, EnvIn2),evalBlock(Y, EnvIn2, EnvOut),!.
-evalProgram(t_program(X), EnvIn, EnvOut) :- evalBlock(X, E0, E).
+evalProgram(t_program(X), EnvIn, EnvOut) :- evalBlock(X, EnvIn, EnvOut).
 
 evalComment(t_comment(X),EnvIn,EnvOut) :-evalWords(X,E0,E).
 
 evalWords(t_words(X,Y),EnvIn,EnvOut) :-evalIdentifier(X,EnvIn,EnvIn2),evalWords(Y,EnvIn2,EnvOut),!.
 
+evalBlock(t_block(X,Y),EnvIn,EnvOut) :-evalDeclaration(X,EnvIn, EnvIn2),evalProcess(Y,EnvIn2,EnvOut),!.
 
 
 % Rules for declaration.
