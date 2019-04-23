@@ -96,10 +96,71 @@ evalTerm(t_term(X), Output, EnvIn, EnvOut) :- evalNum(X, Output, EnvIn, EnvOut).
 evalTerm(t_term(X), Output, EnvIn, EnvOut) :- evalNumneg(X, Output, EnvIn, EnvOut).
 evalTerm(t_term(X), Output, EnvIn, EnvOut) :- evalIdentifier(X, Output, EnvIn, EnvOut).
 
-evalBoolexp(t_boolexp(X,Y), Output, EnvIn, EnvOut) :- evalIdentifier(X, IdOutput, _, EnvIn, EnvIn2)
-                                                       evalExpression(Y, ExpOutput, EnvIn2, EnvOut),
-						       							atom_string(IdOutput, Qstring),
-						       							atom_number(Qstring, NIdOut),
-						       							atom_string(ExpOutput, QExp),
-						       							atom_number(QExp, NExp),
-														((NIdOut =:= NExp) -> !; !,false).
+evalBoolexp(t_boolexp_eq(X,Y), Output, EnvIn, EnvOut) :- evalExpression(X, ExpOutput1, _, EnvIn, EnvIn2)
+                                                       	evalExpression(Y, ExpOutput2, EnvIn2, EnvOut),
+						       							atom_string(ExpOutput1, Qstring),
+						       							atom_number(Qstring, NExp1),
+						       							atom_string(ExpOutput2, QExp2),
+						       							atom_number(QExp2, NExp2),
+														((NExp1 =:= NExp2) -> !; !,false).
+
+
+evalBoolexp(t_boolexp_neq(X,Y), Output, EnvIn, EnvOut) :- evalIdentifier(X, ExpOutput1, _, EnvIn, EnvIn2)
+                                                       	evalExpression(Y, ExpOutput2, EnvIn2, EnvOut),
+						       							atom_string(ExpOutput1, Qstring),
+						       							atom_number(Qstring, NExp1),
+						       							atom_string(ExpOutput2, QExp2),
+						       							atom_number(QExp2, NExp2),
+														((NExp1 \= NExp2) -> !; !,false).
+
+evalBoolexp(t_boolexp_leq(X,Y), Output, EnvIn, EnvOut) :- evalIdentifier(X, ExpOutput1, _, EnvIn, EnvIn2)
+                                                       	evalExpression(Y, ExpOutput2, EnvIn2, EnvOut),
+						       							atom_string(ExpOutput1, Qstring),
+						       							atom_number(Qstring, NExp1),
+						       							atom_string(ExpOutput2, QExp2),
+						       							atom_number(QExp2, NExp2),
+														((NExp1 <= NExp2) -> !; !,false).
+
+evalBoolexp(t_boolexp_geq(X,Y), Output, EnvIn, EnvOut) :- evalIdentifier(X, ExpOutput1, _, EnvIn, EnvIn2)
+                                                       	evalExpression(Y, ExpOutput2, EnvIn2, EnvOut),
+						       							atom_string(ExpOutput1, Qstring),
+						       							atom_number(Qstring, NExp1),
+						       							atom_string(ExpOutput2, QExp2),
+						       							atom_number(QExp2, NExp2),
+														((NExp1 >= NExp2) -> !; !,false).
+
+evalBoolexp(t_boolexp_less(X,Y), Output, EnvIn, EnvOut) :- evalIdentifier(X, ExpOutput1, _, EnvIn, EnvIn2)
+                                                       	evalExpression(Y, ExpOutput2, EnvIn2, EnvOut),
+						       							atom_string(ExpOutput1, Qstring),
+						       							atom_number(Qstring, NExp1),
+						       							atom_string(ExpOutput2, QExp2),
+						       							atom_number(QExp2, NExp2),
+														((NExp1 < NExp2) -> !; !,false).
+
+evalBoolexp(t_boolexp_great(X,Y), Output, EnvIn, EnvOut) :- evalIdentifier(X, ExpOutput1, _, EnvIn, EnvIn2)
+                                                       	evalExpression(Y, ExpOutput2, EnvIn2, EnvOut),
+						       							atom_string(ExpOutput1, Qstring),
+						       							atom_number(Qstring, NExp1),
+						       							atom_string(ExpOutput2, QExp2),
+						       							atom_number(QExp2, NExp2),
+														((NExp1 > NExp2) -> !; !,false).
+
+evalBoolexp(t_boolexp_beq(X,Y), Output, EnvIn, EnvOut) :- evalBoolexp(Y, BoolExpOutput1, EnvIn2, EnvOut),
+                                                       	evalBoolexp(Y, BoolExpOutput2, EnvIn2, EnvOut),
+						       							atom_string(BoolExpOutput1, Qstring),
+						       							atom_number(Qstring, NBExp1),
+						       							atom_string(BoolExpOutput2, QExp2),
+						       							atom_number(QExp2, NBExp2),
+														((NBExp1 =:= NBExp2) -> !; !,false).
+
+evalBoolexp(t_boolexp_bneq(X,Y), Output, EnvIn, EnvOut) :- evalBoolexp(Y, BoolExpOutput1, EnvIn2, EnvOut),
+                                                       	evalBoolexp(Y, BoolExpOutput2, EnvIn2, EnvOut),
+						       							atom_string(BoolExpOutput1, Qstring),
+						       							atom_number(Qstring, NBExp1),
+						       							atom_string(BoolExpOutput2, QExp2),
+						       							atom_number(QExp2, NBExp2),
+														((NBExp1 \= NBExp2) -> !; !,false).
+
+
+evalBoolexp(t_boolexp(true), EnvIn, EnvIn) :- true.
+evalBoolexp(t_boolexp(false), EnvIn, EnvIn) :- false.
