@@ -127,8 +127,10 @@ term(t_term(X,Y)) --> identifier(X),[*],term(Y);
 term(t_term(X)) -->identifier(X); numb(X); numbneg(X).
 
 identifier(t_identifier(X)) -->[X], 
-    {string_chars(X,[H|T])},{(is_alpha(H);X='_')},
-    {forall(member(C,T),(is_alnum(C)); C = '_')}.
+    {string_chars(X,[H|T])}, 
+    {(is_alpha(H); X = '_')},
+    {forall(member(C,T),
+    (is_alnum(C)); C = '_')}.
 
 numbneg(t_numbneg(X)) --> [-],numb(X).
 numb(t_numb(X)) --> [X],{number(X)}.
