@@ -96,4 +96,10 @@ evalTerm(t_term(X), Output, EnvIn, EnvOut) :- evalNum(X, Output, EnvIn, EnvOut).
 evalTerm(t_term(X), Output, EnvIn, EnvOut) :- evalNumneg(X, Output, EnvIn, EnvOut).
 evalTerm(t_term(X), Output, EnvIn, EnvOut) :- evalIdentifier(X, Output, EnvIn, EnvOut).
 
-
+evalBoolexp(t_boolexp(X,Y), Output, EnvIn, EnvOut) :- evalIdentifier(X, IdOutput, _, EnvIn, EnvIn2)
+                                                       evalExpression(Y, ExpOutput, EnvIn2, EnvOut),
+						       							atom_string(IdOutput, Qstring),
+						       							atom_number(Qstring, NIdOut),
+						       							atom_string(ExpOutput, QExp),
+						       							atom_number(QExp, NExp),
+														((NIdOut =:= NExp) -> !; !,false).
