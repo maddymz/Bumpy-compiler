@@ -1,4 +1,4 @@
-bumpy(FileName) :- open(FileName, read, InStream),
+compileBumpy(FileName) :- open(FileName, read, InStream),
 		   tokenCodes(InStream, TokenCodes),
 		   phrase(lexer(Tokens),TokenCodes),
 		   parser(ParseTree, Tokens, []),
