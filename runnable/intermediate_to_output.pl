@@ -25,6 +25,14 @@ evalWords(t_words(X,Y),EnvIn,EnvOut) :-evalIdentifier(X,EnvIn,EnvIn2),evalWords(
 
 evalBlock(t_block(X,Y),EnvIn,EnvOut) :-evalDeclaration(X,EnvIn, EnvIn2),evalProcess(Y,EnvIn2,EnvOut),!.
 
+evalProcess(t_process(X,Y),EnvIn,EnvOut):-evalAssign(X,EnvIn, EnvIn2),evalProcess(Y,EnvIn2,EnvOut).
+evalProcess(t_process(X,Y),EnvIn,EnvOut):-evalControl(X,EnvIn, EnvIn2),evalProcess(Y,EnvIn2,EnvOut).
+evalProcess(t_process(X,Y),EnvIn,EnvOut):-evalIterate(X,EnvIn, EnvIn2),evalProcess(Y,EnvIn2,EnvOut).
+
+evalProcess(t_process(X),EnvIn,EnvOut):-evalAssign(X,EnvIn, EnvOut).
+evalProcess(t_process(X),EnvIn,EnvOut):-evalControl(X,EnvIn, EnvOut).
+evalProcess(t_process(X),EnvIn,EnvOut):-evalIterate(X,EnvIn, EnvOut).
+
 % Rules for declaration.
 evalDeclaration(t_declare(X, Y, Z), EnvIn, EnvOut) :- evalDatatype(X, EnvIn, EnvIn1), evalIdentifier(Y, _, IdName, EnvIn1, EnvIn2), 
 evalDeclaration(Z, EnvIn2, EnvIn3), update(IdName, 0, EnvIn3, EnvOut).
@@ -121,7 +129,7 @@ evalBoolexp(t_boolexp_leq(X,Y), Output, EnvIn, EnvOut) :- evalIdentifier(X, ExpO
 						       							atom_number(Qstring, NExp1),
 						       							atom_string(ExpOutput2, QExp2),
 						       							atom_number(QExp2, NExp2),
-														((NExp1 <= NExp2) -> !; !,false).
+														((NExp1 <= NExp2) -> !; !,false).d
 
 evalBoolexp(t_boolexp_geq(X,Y), Output, EnvIn, EnvOut) :- evalIdentifier(X, ExpOutput1, _, EnvIn, EnvIn2),
                                                        	evalExpression(Y, ExpOutput2, EnvIn2, EnvOut),
