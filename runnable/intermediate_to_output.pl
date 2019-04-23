@@ -148,7 +148,7 @@ evalBoolexp(t_boolexp_leq(X,Y), Output, EnvIn, EnvOut) :- evalIdentifier(X, ExpO
 						       							atom_number(Qstring, NExp1),
 						       							atom_string(ExpOutput2, QExp2),
 						       							atom_number(QExp2, NExp2),
-														((NExp1 <= NExp2) -> !; !,false).
+														((NExp1 =< NExp2) -> !; !,false).
 
 evalBoolexp(t_boolexp_geq(X,Y), Output, EnvIn, EnvOut) :- evalIdentifier(X, ExpOutput1, _, EnvIn, EnvIn2),
                                                        	evalExpression(Y, ExpOutput2, EnvIn2, EnvOut),
