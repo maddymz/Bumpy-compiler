@@ -1,11 +1,19 @@
 evalProgram(t_program(X, Y), EnvIn, EnvOut) :-evalComment(X, EnvIn, EnvIn2),evalBlock(Y, EnvIn2, EnvOut),!.
 evalProgram(t_program(X), EnvIn, EnvOut) :- evalBlock(X, EnvIn, EnvOut).
 
-evalComment(t_comment(X),EnvIn,EnvOut) :-evalWords(X,E0,E).
+evalComment(t_comment(X),EnvIn,EnvOut) :-evalWords(X,EnvIn,EnvOut).
 
 evalWords(t_words(X,Y),EnvIn,EnvOut) :-evalIdentifier(X,EnvIn,EnvIn2),evalWords(Y,EnvIn2,EnvOut),!.
 
 evalBlock(t_block(X,Y),EnvIn,EnvOut) :-evalDeclaration(X,EnvIn, EnvIn2),evalProcess(Y,EnvIn2,EnvOut),!.
+
+evalProcess(t_process(X,Y),EnvIn,EnvOut):-evalAssign(X,EnvIn, EnvIn2),evalProcess(Y,EnvIn2,EnvOut).
+evalProcess(t_process(X,Y),EnvIn,EnvOut):-evalControl(X,EnvIn, EnvIn2),evalProcess(Y,EnvIn2,EnvOut).
+evalProcess(t_process(X,Y),EnvIn,EnvOut):-evalIterate(X,EnvIn, EnvIn2),evalProcess(Y,EnvIn2,EnvOut).
+
+evalProcess(t_process(X),EnvIn,EnvOut):-evalAssign(X,EnvIn, EnvOut).
+evalProcess(t_process(X),EnvIn,EnvOut):-evalControl(X,EnvIn, EnvOut).
+evalProcess(t_process(X),EnvIn,EnvOut):-evalIterate(X,EnvIn, EnvOut).
 
 
 % Rules for declaration.
