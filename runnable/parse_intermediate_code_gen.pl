@@ -106,9 +106,14 @@ iterate(t_iterate(X,Y)) --> [when], condition(X), [repeat], process(Y), [endrepe
 condition(t_cond(X,Y)) --> boolexp(X), [and], boolexp(Y); boolexp(X), [or], boolexp(Y).
 condition(t_cond(X)) -->[~], boolexp(X); boolexp(X).
 
-boolexp(t_boolexp(X,Y)) --> expression(X), [:=:], expression(Y); expression(X), [~=], expression(Y); 
-    expression(X), [<=], expression(Y); expression(X), [>=], expression(Y); expression(X), [<], expression(Y);
-    expression(X), [>], expression(Y); expression(X), [:=:], boolexp(Y); expression(X), [~=], boolexp(Y). 
+boolexp(t_boolexp_eq(X,Y)) --> expression(X), [:=:], expression(Y).
+boolexp(t_boolexp_neq(X,Y)) --> expression(X), [~=], expression(Y). 
+boolexp(t_boolexp_leq(X,Y)) --> expression(X), [<=], expression(Y).
+boolexp(t_boolexp_geq(X,Y)) --> expression(X), [>=], expression(Y).
+boolexp(t_boolexp_less(X,Y)) --> expression(X), [<], expression(Y).
+boolexp(t_boolexp_great(X,Y)) --> expression(X), [>], expression(Y).
+boolexp(t_boolexp_beq(X,Y)) --> expression(X), [:=:], boolexp(Y).
+boolexp(t_boolexp_bneq(X,Y)) --> expression(X), [~=], boolexp(Y). 
 boolexp(t_boolexp(yes)) --> [yes].
 boolexp(t_boolexp(no)) --> [no].
 
