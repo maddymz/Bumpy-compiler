@@ -16,12 +16,12 @@ update(X,V,[],[(X,V)]).
 update(X,V,[(X,_)|T],[(X,V)|T]).
 update(X,V,[H|T],[H|T1]) :- update(X,V,T,T1).
 
-evalProgram(t_program(X, Y), EnvIn, EnvOut) :-evalComment(X, EnvIn, EnvIn2),evalBlock(Y, EnvIn2, EnvOut),!.
+evalProgram(t_program(X, Y), EnvIn, EnvOut) :-evalComment(X, EnvIn, EnvIn),evalBlock(Y, EnvIn, EnvOut),!.
 evalProgram(t_program(X), EnvIn, EnvOut) :- evalBlock(X, EnvIn, EnvOut).
 
 evalComment(t_comment(X),EnvIn,EnvOut) :-evalWords(X,EnvIn,EnvOut).
 
-evalWords(t_words(X,Y),EnvIn,EnvOut) :-evalIdentifier(X,EnvIn,EnvIn2),evalWords(Y,EnvIn2,EnvOut),!.
+evalWords(t_words(X,Y),EnvIn,EnvOut) :-evalIdentifier(X,_,_,EnvIn,EnvIn),evalWords(Y,EnvIn,EnvOut),!.
 
 evalBlock(t_block(X,Y),EnvIn,EnvOut) :-evalDeclaration(X,EnvIn, EnvIn2),evalProcess(Y,EnvIn2,EnvOut),!.
 
@@ -46,7 +46,7 @@ evalAssign(t_assign(X,Y), EnvIn, EnvOut) :-
 
 evalAssign(t_assign(X,Y), EnvIn, EnvOut) :- 
     evalIdentifier(X, _, IdName, EnvIn, EnvIn2),
-    evalBoolExpression(Y, Output, EnvIn2, EnvIn3),
+    evalBoolexp(Y, Output, EnvIn2, EnvIn3),
     update(IdName, Output, EnvIn3, EnvOut).
 
 evalNum(t_num(X), Output, EnvIn, EnvIn) :- Output = X, !.
@@ -102,7 +102,7 @@ evalTerm(t_mul(X,Y), Output, EnvIn, EnvOut) :- evalTerm(X, TermOut, EnvIn, EnvIn
                              atom_number(QtermOut, NtermOut),
                              atom_string(ExpOut, QexpOut),
                              atom_number(QexpOut, NexpOut),
-                                               Output is NfactOut * NtermOut.
+                                               Output is NexpOut * NtermOut.
 
 evalTerm(t_div(X,Y), Output, EnvIn, EnvOut) :- evalTerm(X, TermOut, EnvIn, EnvIn2),
                                                      evalExpression(Y, ExpOut, EnvIn2, EnvOut),
@@ -110,7 +110,7 @@ evalTerm(t_div(X,Y), Output, EnvIn, EnvOut) :- evalTerm(X, TermOut, EnvIn, EnvIn
                              atom_number(QtermOut, NtermOut),
                              atom_string(ExpOut, QexpOut),
                              atom_number(QexpOut, NexpOut),
-                                               Output is NfactOut / NtermOut.
+                                               Output is NexpOut / NtermOut.
 
 evalTerm(t_mod(X,Y), Output, EnvIn, EnvOut) :- evalTerm(X, TermOut, EnvIn, EnvIn2),
                                                      evalExpression(Y, ExpOut, EnvIn2, EnvOut),
@@ -118,14 +118,14 @@ evalTerm(t_mod(X,Y), Output, EnvIn, EnvOut) :- evalTerm(X, TermOut, EnvIn, EnvIn
                              atom_number(QtermOut, NtermOut),
                              atom_string(ExpOut, QexpOut),
                              atom_number(QexpOut, NexpOut),
-                                               Output is NfactOut mod NtermOut.
+                                               Output is NexpOut mod NtermOut.
 
 evalTerm(t_term(X), Output, EnvIn, EnvOut) :- evalNum(X, Output, EnvIn, EnvOut).
 evalTerm(t_term(X), Output, EnvIn, EnvOut) :- evalNumneg(X, Output, EnvIn, EnvOut).
-evalTerm(t_term(X), Output, EnvIn, EnvOut) :- evalIdentifier(X, Output, EnvIn, EnvOut).
+evalTerm(t_term(X), Output, EnvIn, EnvOut) :- evalIdentifier(X,_, Output, EnvIn, EnvOut).
 
 %rule for boolexpression
-evalBoolexp(t_boolexp_eq(X,Y), Output, EnvIn, EnvOut) :- evalExpression(X, ExpOutput1, _, EnvIn, EnvIn2),
+evalBoolexp(t_boolexp_eq(X,Y), Output, EnvIn, EnvOut) :- evalExpression(X, ExpOutput1, EnvIn, EnvIn2),
                                                        	evalExpression(Y, ExpOutput2, EnvIn2, EnvOut),
 						       							atom_string(ExpOutput1, Qstring),
 						       							atom_number(Qstring, NExp1),
@@ -174,7 +174,7 @@ evalBoolexp(t_boolexp_great(X,Y), Output, EnvIn, EnvOut) :- evalIdentifier(X, Ex
 						       							atom_number(QExp2, NExp2),
 														((NExp1 > NExp2) -> !; !,false).
 
-evalBoolexp(t_boolexp_beq(X,Y), Output, EnvIn, EnvOut) :- evalBoolexp(Y, BoolExpOutput1, EnvIn2, EnvOut),
+evalBoolexp(t_boolexp_beq(X,Y), Output, EnvIn, EnvOut) :- evalBoolexp(Y, BoolExpOutput1, EnvIn, EnvIn2),
                                                        	evalBoolexp(Y, BoolExpOutput2, EnvIn2, EnvOut),
 						       							atom_string(BoolExpOutput1, Qstring),
 						       							atom_number(Qstring, NBExp1),
@@ -182,7 +182,7 @@ evalBoolexp(t_boolexp_beq(X,Y), Output, EnvIn, EnvOut) :- evalBoolexp(Y, BoolExp
 						       							atom_number(QExp2, NBExp2),
 														((NBExp1 =:= NBExp2) -> !; !,false).
 
-evalBoolexp(t_boolexp_bneq(X,Y), Output, EnvIn, EnvOut) :- evalBoolexp(Y, BoolExpOutput1, EnvIn2, EnvOut),
+evalBoolexp(t_boolexp_bneq(X,Y), Output, EnvIn, EnvOut) :- evalBoolexp(Y, BoolExpOutput1, EnvIn, EnvIn2),
                                                        	evalBoolexp(Y, BoolExpOutput2, EnvIn2, EnvOut),
 						       							atom_string(BoolExpOutput1, Qstring),
 						       							atom_number(Qstring, NBExp1),
@@ -191,8 +191,8 @@ evalBoolexp(t_boolexp_bneq(X,Y), Output, EnvIn, EnvOut) :- evalBoolexp(Y, BoolEx
 														((NBExp1 \= NBExp2) -> !; !,false).
 
 
-evalBoolexp(t_boolexp(true), EnvIn, EnvIn) :- true.
-evalBoolexp(t_boolexp(false), EnvIn, EnvIn) :- false.
+evalBoolexp(t_boolexp(true), Output, EnvIn, EnvIn) :- Output is true.
+evalBoolexp(t_boolexp(false), Output, EnvIn, EnvIn) :- Output is false.
 
 % rule for control
 evalControl(t_control(X,Y,Z), EnvIn,EnvOut):- (evalCondition(X, EnvIn, EnvIn1)->  evalProcess(Y, EnvIn1, EnvOut));
