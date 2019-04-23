@@ -13,6 +13,16 @@ evalDeclaration(Z, EnvIn2, EnvIn3), update(IdName, 0, EnvIn3, EnvOut).
 evalDeclaration(t_declare(X, Y), EnvIn, EnvOut) :- evalDatatype(X, EnvIn, EnvIn1),
 evalIdentifier(Y, _, IdName, EnvIn1, EnvIn2), update(IdName, 0, EnvIn2, EnvOut).
 
+evalAssign(t_assign(X,Y), EnvIn, EnvOut) :- 
+    evalIdentifier(X, _, IdName, EnvIn, EnvIn2),
+    evalExpression(Y, Output, EnvIn2, EnvIn3),
+    update(IdName, Output, EnvIn3, EnvOut).
+
+evalAssign(t_assign(X,Y), EnvIn, EnvOut) :- 
+    evalIdentifier(X, _, IdName, EnvIn, EnvIn2),
+    evalBoolExpression(Y, Output, EnvIn2, EnvIn3),
+    update(IdName, Output, EnvIn3, EnvOut).
+
 evalNum(t_num(X), Output, EnvIn, EnvIn) :- Output = X, !.
 evalNumneg(t_numneg(X), Output, EnvIn, EnvIn) :- Output = X, !.
 evalIdentifier(t_identifier(X), Output, Ident, EnvIn, EnvIn) :- lookup(X, EnvIn, Output), Ident = X.
