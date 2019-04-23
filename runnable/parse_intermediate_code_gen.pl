@@ -1,11 +1,11 @@
 bumpy(FileName) :- open(FileName, read, InStream),
 		   tokenCodes(InStream, TokenCodes),
 		   phrase(lexer(Tokens),TokenCodes),
-		   program(ParseTree, Tokens, []),
+		   parser(ParseTree, Tokens, []),
 		   close(InStream),
 		   split_string(FileName, ".", "", L),
 		   L = [H|_T],
-		   atom_concat(H, ".ic", X),
+		   atom_concat(H, ".bmic", X),
 		   open(X, write, OutStream),
 		   write(OutStream, ParseTree),
 		   write(OutStream, '.'),
@@ -15,11 +15,6 @@ close(OutStream).
 tokenCodes(InStream,[]) :- at_end_of_stream(InStream), !.
 tokenCodes(InStream, [TokenCode | RemTokens]) :- get_code(InStream, TokenCode),
                                                  tokenCodes(InStream, RemTokens).
-
-createFileString([],[]).
-createFileString([TokenCode|RemTokens], [Atom|L]) :- 
-    char_code(Atom, TokenCode),  
-    createFileString(RemTokens, L).
 
 
 %===========================================================================================
@@ -84,6 +79,8 @@ identifier(L, Id) -->alphanum(As),{ atom_codes(Id, [L|As]) }.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+parser(X) --> program(X).
+
 program(t_program(X,Y)) -->comment(X),block(Y).
 program(t_program(X)) -->block(X).
 
@@ -130,9 +127,8 @@ term(t_term(X,Y)) --> identifier(X),[*],term(Y);
 term(t_term(X)) -->identifier(X); numb(X); numbneg(X).
 
 identifier(t_identifier(X)) -->[X], 
-    {string_chars(X,[Fc|Rc])},{(is_alpha(Fc);X='_')},
-    {forall(member(R,Rc),(is_alnum(R)); R = '_')}.
+    {string_chars(X,[H|T])},{(is_alpha(H);X='_')},
+    {forall(member(C,T),(is_alnum(C)); C = '_')}.
 
 numbneg(t_numbneg(X)) --> [-],numb(X).
 numb(t_numb(X)) --> [X],{number(X)}.
-
