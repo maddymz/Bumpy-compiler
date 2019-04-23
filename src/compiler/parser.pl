@@ -1,3 +1,4 @@
+%:-use_rendering(svgtree).
 program(t_program(X,Y)) -->comment(X),block(Y).
 program(t_program(X)) -->block(X).
 
@@ -36,14 +37,10 @@ expression(t_add(X,Y)) --> term(X),[+],expression(Y).
 expression(t_sub(X,Y)) --> term(X),[-],expression(Y).
 expression(t_expr(X)) --> term(X).
 
-term(t_mul(X,Y)) --> factor(X),[*],term(Y).
-term(t_div(X,Y)) -->factor(X),[/],term(Y).
-term(t_mod(X,Y)) -->factor(X),[mod],term(Y).
-term(t_term(X)) -->factor(X).
-
-factor(t_identifier(X)) -->identifier(X).
-factor(t_numb(X)) -->numb(X).
-factor(t_numbneg(X)) -->numbneg(X).
+term(t_mul(X,Y)) --> identifier(X),[*],term(Y);numb(X),[*],term(Y);numbneg(X),[*],term(Y).
+term(t_div(X,Y)) -->identifier(X),[/],term(Y);numb(X),[/],term(Y);numbneg(X),[/],term(Y).
+term(t_mod(X,Y)) -->identifier(X),[mod],term(Y);numb(X),[mod],term(Y);numbneg(X),[mod],term(Y).
+term(t_term(X)) -->identifier(X);numb(X);numbneg(X).
 
 identifier(t_identifier(X)) -->[X], 
     {string_chars(X,[Fc|Rc])},{(is_alpha(Fc);X='_')},
