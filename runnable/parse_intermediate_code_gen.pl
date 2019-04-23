@@ -103,8 +103,10 @@ control(t_control(X,Y,Z)) --> [incase], condition(X), [do], process(Y), [otherwi
 
 iterate(t_iterate(X,Y)) --> [when], condition(X), [repeat], process(Y), [endrepeat].
 
-condition(t_cond(X,Y)) --> boolexp(X), [and], boolexp(Y); boolexp(X), [or], boolexp(Y).
-condition(t_cond(X)) -->[~], boolexp(X); boolexp(X).
+condition(t_cond_and(X,Y)) --> boolexp(X), [and], boolexp(Y); 
+condition(t_cond_or(X,Y)) --> boolexp(X), [or], boolexp(Y).
+condition(t_cond_not(X)) --> [~], boolexp(X); 
+condition(t_cond(X)) --> boolexp(X).
 
 boolexp(t_boolexp_eq(X,Y)) --> expression(X), [:=:], expression(Y).
 boolexp(t_boolexp_neq(X,Y)) --> expression(X), [~=], expression(Y). 
