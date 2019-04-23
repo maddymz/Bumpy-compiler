@@ -91,6 +91,9 @@ evalTerm(t_term(X), Output, EnvIn, EnvOut) :- evalIdentifier(X, Output, EnvIn, E
 evalControl(t_control(X,Y,Z), EnvIn,EnvOut):- (evalCondition(X, EnvIn, EnvIn1)->  evalProcess(Y, EnvIn1, EnvOut));
     								evalProcess(Z,EnvIn,EnvOut).
 
+% rule for iterate
+evalIterate(t_iterate(X,Y), EnvIn,EnvOut):- (evalCondition(X, EnvIn, EnvIn1)->  evalProcess(Y, EnvIn1, EnvIn2),evalIterate(t_iterate(X,Y), EnvIn2,EnvOut));EnvOut = EnvIn.
+
 %rule for condition 
 evalCondition(t_cond_and(X,Y),Output, EnvIn,EnvOut):- evalBoolexp(X,Output, EnvIn,EnvIn1),evalBoolexp(Y, Output, EnvIn1, EnvOut).
 evalCondition(t_cond_or(X,Y),Output, EnvIn,EnvOut):- evalBoolexp(X,Output, EnvIn,EnvIn1),evalBoolexp(Y, Output, EnvIn1, EnvOut).
