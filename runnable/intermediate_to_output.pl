@@ -17,13 +17,13 @@ update(X,V,[(X,_)|T],[(X,V)|T]).
 update(X,V,[H|T],[H|T1]) :- update(X,V,T,T1).
 
 evalProgram(t_program(X, Y), EnvIn, EnvOut) :-evalComment(X, EnvIn, EnvIn2),evalBlock(Y, EnvIn2, EnvOut),!.
-evalProgram(t_program(X), EnvIn, EnvOut) :- evalBlock(X, E0, E).
+evalProgram(t_program(X), EnvIn, EnvOut) :- evalBlock(X, EnvIn, EnvOut).
 
-evalComment(t_comment(X),EnvIn,EnvOut) :-evalWords(X,E0,E).
+evalComment(t_comment(X),EnvIn,EnvOut) :-evalWords(X,EnvIn,EnvOut).
 
-evalWords(t_words(X,Y),EnvIn,EnvOut) :-evalIdentifier(X,EnvIn,EnvIn2),evalWords(Y,EnvIn2,EnvOut),!.
+evalWords(t_words(X,Y),EnvIn,EnvOut) :-evalIdentifier(X,EnvIn,EnvIn2),evalWords(Y,EnvIn2,EnvOut),!
 
-
+evalBlock(t_block(X,Y),EnvIn,EnvOut) :-evalDeclaration(X,EnvIn, EnvIn2),evalProcess(Y,EnvIn2,EnvOut),!.
 
 % Rules for declaration.
 evalDeclaration(t_declare(X, Y, Z), EnvIn, EnvOut) :- evalDatatype(X, EnvIn, EnvIn1), evalIdentifier(Y, _, IdName, EnvIn1, EnvIn2), 
@@ -176,3 +176,6 @@ evalCondition(t_cond_and(X,Y),Output, EnvIn,EnvOut):- evalBoolexp(X,Output, EnvI
 evalCondition(t_cond_or(X,Y),Output, EnvIn,EnvOut):- evalBoolexp(X,Output, EnvIn,EnvIn1),evalBoolexp(Y, Output, EnvIn1, EnvOut).
 evalCondtion(t_cond_not(X),Output, EnvIn,EnvOut):- evalBoolexp(X,Output, EnvIn,EnvOut).
 evalCondition(t_cond(X),Output, EnvIn,EnvOut):- evalBoolexp(X,Output, EnvIn,EnvOut).
+
+% rule for iterate
+evalIterate(t_iterate(X,Y), EnvIn,EnvOut):- (evalCondition(X, EnvIn, EnvIn1)->  evalProcess(Y, EnvIn1, EnvIn2),evalIterate(t_iterate(X,Y), EnvIn2,EnvOut));EnvOut = EnvIn.
