@@ -87,4 +87,15 @@ evalTerm(t_term(X), Output, EnvIn, EnvOut) :- evalNum(X, Output, EnvIn, EnvOut).
 evalTerm(t_term(X), Output, EnvIn, EnvOut) :- evalNumneg(X, Output, EnvIn, EnvOut).
 evalTerm(t_term(X), Output, EnvIn, EnvOut) :- evalIdentifier(X, Output, EnvIn, EnvOut).
 
+% rule for control
+evalControl(t_control(X,Y,Z), EnvIn,EnvOut):- (evalCondition(X, EnvIn, EnvIn1)->  evalProcess(Y, EnvIn1, EnvOut));
+    								evalProcess(Z,EnvIn,EnvOut).
+
+%rule for condition 
+evalCondition(t_cond_and(X,Y),Output, EnvIn,EnvOut):- evalBoolexp(X,Output, EnvIn,EnvIn1),evalBoolexp(Y, Output, EnvIn1, EnvOut).
+evalCondition(t_cond_or(X,Y),Output, EnvIn,EnvOut):- evalBoolexp(X,Output, EnvIn,EnvIn1),evalBoolexp(Y, Output, EnvIn1, EnvOut).
+evalCondtion(t_cond_not(X),Output, EnvIn,EnvOut):- evalBoolexp(X,Output, EnvIn,EnvOut).
+evalCondition(t_cond(X),Output, EnvIn,EnvOut):- evalBoolexp(X,Output, EnvIn,EnvOut).
+
+
 
