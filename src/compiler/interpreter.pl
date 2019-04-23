@@ -59,28 +59,28 @@ evalExpression(t_sub(X,Y), Output, EnvIn, EnvOut) :- evalTerm(X, TermOut, EnvIn,
 
 evalExpression(t_exp(X), Output, EnvIn, EnvOut) :- evalTerm(X, Output, EnvIn, EnvOut).
 
-evalTerm(t_mul(X,Y), Output, EnvIn, EnvOut) :- evalFactor(X, FactOut, EnvIn, EnvIn2),
-                                               evalTerm(Y, TermOut, EnvIn2, EnvOut),
-                           atom_string(TermOut, QtermOut),
-                           atom_number(QtermOut, NtermOut),
-                           atom_string(FactOut, QfactOut),
-                           atom_number(QfactOut, NfactOut),
+evalTerm(t_mul(X,Y), Output, EnvIn, EnvOut) :- evalTerm(X, TermOut, EnvIn, EnvIn2),
+                                                     evalExpression(Y, ExpOut, EnvIn2, EnvOut),
+                             atom_string(TermOut, QtermOut),
+                             atom_number(QtermOut, NtermOut),
+                             atom_string(ExpOut, QexpOut),
+                             atom_number(QexpOut, NexpOut),
                                                Output is NfactOut * NtermOut.
 
-evalTerm(t_div(X,Y), Output, EnvIn, EnvOut) :- evalFactor(X, FactOut, EnvIn, EnvIn2),
-                                               evalTerm(Y, TermOut, EnvIn2, EnvOut),
-                           atom_string(TermOut, QtermOut),
-                            atom_number(QtermOut, NtermOut),
-                            atom_string(FactOut, QfactOut),
-                            atom_number(QfactOut, NfactOut),
+evalTerm(t_div(X,Y), Output, EnvIn, EnvOut) :- evalTerm(X, TermOut, EnvIn, EnvIn2),
+                                                     evalExpression(Y, ExpOut, EnvIn2, EnvOut),
+                             atom_string(TermOut, QtermOut),
+                             atom_number(QtermOut, NtermOut),
+                             atom_string(ExpOut, QexpOut),
+                             atom_number(QexpOut, NexpOut),
                                                Output is NfactOut / NtermOut.
 
-evalTerm(t_mod(X,Y), Output, EnvIn, EnvOut) :- evalFactor(X, FactOut, EnvIn, EnvIn2),
-                                               evalTerm(Y, TermOut, EnvIn2, EnvOut),
-                           atom_string(TermOut, QtermOut),
-                            atom_number(QtermOut, NtermOut),
-                            atom_string(FactOut, QfactOut),
-                            atom_number(QfactOut, NfactOut),
+evalTerm(t_mod(X,Y), Output, EnvIn, EnvOut) :- evalTerm(X, TermOut, EnvIn, EnvIn2),
+                                                     evalExpression(Y, ExpOut, EnvIn2, EnvOut),
+                             atom_string(TermOut, QtermOut),
+                             atom_number(QtermOut, NtermOut),
+                             atom_string(ExpOut, QexpOut),
+                             atom_number(QexpOut, NexpOut),
                                                Output is NfactOut mod NtermOut.
 
 evalTerm(t_term(X), Output, EnvIn, EnvOut) :- evalNum(X, Output, EnvIn, EnvOut).
