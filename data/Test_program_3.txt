@@ -1,11 +1,9 @@
-@ test program 3 @
-
 start
     var num;
     var i;
     num = 0;
-
-    when yes
+    
+    when num < 3
         repeat 
             num = num + 1;
         endrepeat
