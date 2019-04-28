@@ -97,8 +97,10 @@ datatype(t_datatype(bool)) --> [bool].
 declaration(t_declare(X,Y,Z)) --> datatype(X), identifier(Y), [;], declaration(Z).    
 declaration(t_declare(X,Y)) -->datatype(X),identifier(Y),[;].
 
-process(t_process(X,Y)) --> assignvalue(X), [;], process(Y); control(X), process(Y); iterate(X), process(Y).
-process(t_process(X)) -->assignvalue(X),[;] ;control(X) ;iterate(X).
+process(t_process(X,Y)) --> assignvalue(X), [;], process(Y); control(X), process(Y); iterate(X), process(Y); print(X), process(Y).
+process(t_process(X)) -->assignvalue(X),[;] ;control(X) ;iterate(X);print(X).
+
+print(t_print(X)) --> [print],[(],expression(X),[)],[;].
 
 assignvalue(t_assign(X,Y)) --> identifier(X), [=] ,expression(Y); identifier(X), [is], boolexp(Y).
 
