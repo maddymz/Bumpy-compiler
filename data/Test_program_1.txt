@@ -1,3 +1,4 @@
+@ test program 1 @
 start 
     var a;
     var b;
@@ -7,6 +8,6 @@ start
     b = 7;
     c = a + b;
 
-    show c;
+    show c + 8;
 stop
 

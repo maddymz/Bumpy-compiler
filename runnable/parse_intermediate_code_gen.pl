@@ -102,6 +102,8 @@ process(t_process(X,Y)) --> assignvalue(X), [;], process(Y); control(X), process
 process(t_process(X)) -->assignvalue(X),[;] ;control(X) ;iterate(X);print(X).
 
 print(t_print(X)) --> [show],expression(X),[;].
+% print(t_print(X)) --> [show], ["], words(X), ["],[;].
+
 
 assignvalue(t_assign(X,Y)) --> identifier(X), [=] ,expression(Y); identifier(X), [is], boolexp(Y).
 

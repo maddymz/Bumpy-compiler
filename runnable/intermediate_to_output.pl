@@ -3,9 +3,14 @@ bumpy(FileName) :- open(FileName, read, InStream),
 		      		close(InStream),
 		      		evalParser(X, EnvOut).
 
-evalParser(X, EnvOut) :- evalProgram(X, EnvOut).
+evalParser(X, EnvOut) :- evalProgram(X,[],EnvOut).
 
-evalProgram(t_program(X),EnvOut) :- evalBlock(X,[], EnvOut).
+% evalProgram(t_program(X,Y),EnvIn, EnvOut) :- evalComment(X,EnvIn,EnvIn2),evalBlock(X,EnvIn2, EnvOut).
+evalProgram(t_program(X),EnvIn, EnvOut) :- evalBlock(X,EnvIn, EnvOut).
+
+% evalComment(t_comment(X),EnvIn,EnvOut) :- evalWords(X,EnvIn,EnvOut).
+
+% evalWords(t_words(_),EnvIn,EnvIn).
 
 evalProcess(t_process(X),EnvIn,EnvOut):-evalPrint(X,EnvIn, EnvOut).
 evalProcess(t_process(X),EnvIn,EnvOut):-evalAssign(X,EnvIn,EnvOut).
@@ -33,17 +38,6 @@ update(X,V,[(X,_)|T],[(X,V)|T]).
 update(X,V,[H|T],[H|T1]) :- update(X,V,T,T1).
 
 % iterate
-% evalIterate(t_iterate(X,Y),EnvIn,EnvOut):-
-%     evalCond(X,Output,EnvIn,EnvIn),
-%     Output = true,
-%     evalProcess(Y,EnvIn,EnvIn2),
-%     evalIterate(t_iterate(X,Y),EnvIn2,EnvOut).
-
-% evalIterate(t_iterate(X,_),EnvIn,EnvOut):-
-%     evalCond(X,Output,EnvIn,EnvIn),
-% 	Output is false,
-% 	EnvOut = EnvIn.
-
 evalIterate(t_iterate(X,Y),EnvIn,EnvOut):- (evalCond(X,Output,EnvIn, EnvIn),Output=true ->  evalProcess(Y, EnvIn, EnvIn2),evalIterate(t_iterate(X,Y), EnvIn2,EnvOut)).
 evalIterate(t_iterate(X,Y),EnvIn,EnvOut):- evalCond(X,Output,EnvIn, EnvIn),Output=false,!, EnvOut = EnvIn.
 
