@@ -1,0 +1,16 @@
+start
+    var n;
+    var c;
+    c = 2;
+    n = 5;   
+    when c <= n-1
+        repeat 
+            incase n mod 2 :=: 0
+     			do
+					show c;
+     			otherwise
+        			show n;
+   			endcase
+            c = c + 1;
+        endrepeat
+stop
