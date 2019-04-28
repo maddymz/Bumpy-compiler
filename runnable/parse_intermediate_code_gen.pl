@@ -45,7 +45,7 @@ lexer(Tokens) -->
         "=",  !, { Token = =  };
         "is",  !, { Token = is  };
         ":=:",  !, { Token = :=:  };
-        "print" !, {Token = print};
+        "print", !, {Token = print};
         "~=", !, { Token = ~= };
         "+",  !, { Token = +  };
         "-",  !, { Token = -  };
