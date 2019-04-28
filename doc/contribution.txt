@@ -6,13 +6,21 @@ Madhukar Raj
 Palak Chugh
 Yuti Desai
 
-Milestone 2: Name, Design and Grammar: All participants equally contributed for the milestone 2 and defined 
-grammar for the language by discussions and brain storming.
+MILESTONE 2: Name, Design and Grammar: 
 
-Milestone 3: Final Project Submission: We have discussed, researched and have come to the decision to divide 
-the work like below:
+All participants equally contributed for the milestone 2 and defined grammar for the language 
+by discussions and brain storming.
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+MILESTONE 3 (TENTATIVE PLAN): Final Project Submission: 
+We have discussed, researched and have come to the decision to divide the work like below:
 
 lexical analyzer, parser : Yuti Desai and Palak Chugh
 
 Intermediate code generator, and runtime environment: Madhukar Raj, Bharat Goel
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+MILESTONE 3
 
