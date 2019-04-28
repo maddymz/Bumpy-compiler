@@ -6,12 +6,14 @@ Madhukar Raj
 Palak Chugh
 Yuti Desai
 
+#######################################################################################################
+
 MILESTONE 2: Name, Design and Grammar: 
 
 All participants equally contributed for the milestone 2 and defined grammar for the language 
 by discussions and brain storming.
 
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#######################################################################################################
 
 MILESTONE 3 (TENTATIVE PLAN): Final Project Submission: 
 We have discussed, researched and have come to the decision to divide the work like below:
@@ -20,7 +22,34 @@ lexical analyzer, parser : Yuti Desai and Palak Chugh
 
 Intermediate code generator, and runtime environment: Madhukar Raj, Bharat Goel
 
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+########################################################################################################
 
 MILESTONE 3
+
+Bharat Goel :
+Implemented reading the program form the txt file and tokenizing it.
+Implemented interpreter to support additional features added in language.
+Generating an intermediate code file and reading in for runtime.
+Handled print functionality in interpreter.
+
+Madhukar Raj :
+Added basic programs for lexer and implemented complex identifier names, negative numbers in parser.
+Started writing reduction rules for Interpreter .
+Implemented interpreter to support additional features added in language.
+Handled comments in the interpreter. 
+
+Palak Chugh :
+Started the functionality of Parser and implemented it for single character identifiers and digit.
+Started working on interpreter to handle environment variables.
+Modified interpreter according to the features added in parser.
+Started testing with different programs for created language and added example programs for the language.
+
+Yuti Desai :
+Implemented the tokenizer for keywords, space, newline and end of File and single character identifiers.
+Added functionality to handle complex identifier names, numbers and negative numbers.
+Added test programs according to the parser and modified interpreter according to the features added in parser.
+Started testing and working on presentation.
+
+#######################################################################################################
+
 
