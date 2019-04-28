@@ -7,7 +7,7 @@ evalParser(X, EnvOut) :- evalProgram(X, EnvOut).
 
 evalProgram(t_program(X),EnvOut) :- evalBlock(X,[], EnvOut).
 
-evalProcess(t_process(X),EnvIn,EnvOut):-evalPrint(X,EnvIn).
+evalProcess(t_process(X),EnvIn,EnvOut):-evalPrint(X,EnvIn, EnvOut).
 evalProcess(t_process(X),EnvIn,EnvOut):-evalAssign(X,EnvIn,EnvOut).
 evalProcess(t_process(X),EnvIn,EnvOut):-evalIterate(X,EnvIn,EnvOut).
 evalProcess(t_process(X),EnvIn,EnvOut):-evalControl(X,EnvIn,EnvOut).
@@ -17,13 +17,10 @@ evalProcess(t_process(X,Y),EnvIn,EnvOut):-evalIterate(X,EnvIn,EnvIn2),
     evalProcess(Y,EnvIn2,EnvOut).
 evalProcess(t_process(X,Y),EnvIn,EnvOut):-evalControl(X,EnvIn,EnvIn2),
     evalProcess(Y,EnvIn2,EnvOut).
-evalProcess(t_process(X,Y), EnvIn, EnvOut) :- evalPrint(X, EnvIn),
+evalProcess(t_process(X,Y), EnvIn, EnvOut) :- evalPrint(X, EnvIn,EnvOut),
  evalProcess(Y, EnvIn, EnvOut).
 
-evalPrint(t_print(X),EnvIn) :- 
-evalExpression(t_expr(X),Output,EnvIn,EnvIn), write(Output);
-evalExpression(t_add(X,Y),Output,EnvIn,EnvIn),write(Output);
-evalExpression(t_sub(X,Y),Output,EnvIn,EnvIn),write(Output);
+evalPrint(t_print(X),EnvIn,EnvOut) :-  evalExpression(X,Output,EnvIn,EnvIn), write(Output).
 
 % Look up the environment to find the value of a variable
 lookup(_,[],0).
