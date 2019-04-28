@@ -17,6 +17,8 @@ evalProcess(t_process(X,Y),EnvIn,EnvOut):-evalIterate(X,EnvIn,EnvIn2),
     evalProcess(Y,EnvIn2,EnvOut).
 evalProcess(t_process(X,Y),EnvIn,EnvOut):-evalControl(X,EnvIn,EnvIn2),
     evalProcess(Y,EnvIn2,EnvOut).
+evalProcess(t_process(X,Y), EnvIn, EnvOut) :- evalPrint(X, EnvIn),
+ evalProcess(Y, EnvIn, EnvOut).
 
 evalPrint(t_print(X),EnvIn) :- 
 evalExpression(t_expr(X),Output,EnvIn,EnvIn), write(Output);
