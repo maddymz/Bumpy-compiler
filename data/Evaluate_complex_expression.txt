@@ -1,5 +1,5 @@
 start
     var x;
     x = 3 + 4 * 5 / 2;
-    print x;    
+    show x;    
 stop
