@@ -21,7 +21,6 @@ bumpy(FileName) :- open(FileName, read, InStream),
 	evalProcess(t_process(X,Y), EnvIn, EnvOut) :- evalPrint(X, EnvIn,EnvOut),
 	evalProcess(Y, EnvIn, EnvOut),!.
 
-	evalPrint(t_print(X),EnvIn,EnvOut) :-  evalExpression(X,Output,EnvIn,EnvOut), write(Output).
 
 	% Look up the environment to find the value of a variable
 	lookup(_,[],0).
@@ -37,6 +36,9 @@ bumpy(FileName) :- open(FileName, read, InStream),
 	evalIterate(t_iterate(X,Y),EnvIn,EnvOut):- (evalCond(X,Output,EnvIn, EnvIn),Output=true ->  evalProcess(Y, EnvIn, EnvIn2),evalIterate(t_iterate(X,Y), EnvIn2,EnvOut)).
 	evalIterate(t_iterate(X,Y),EnvIn,EnvOut):- evalCond(X,Output,EnvIn, EnvIn),Output=false,!, EnvOut = EnvIn.
 
+	% Rules to evaluate print statements.
+	evalPrint(t_print(X),EnvIn,EnvOut) :-  evalExpression(X,Output,EnvIn,EnvOut), write(Output).
+	evalPrint(t_printString(X), EnvIn, EnvIn) :- write(X), write(" "),!.
 
 	%Control
 	evalControl(t_control(X,Y,_),EnvIn,EnvOut):-

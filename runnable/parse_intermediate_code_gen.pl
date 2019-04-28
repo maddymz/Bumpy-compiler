@@ -51,6 +51,7 @@ lexer(Tokens) -->
         "-",  !, { Token = -  };
         "*",  !, { Token = *  };
         "/", !, { Token = /  };
+        "$", !, {Token = $ };
         "mod", !, { Token = mod  };  
         digit(D),  !, number(D, N), { Token = N };
         lowletter(L), !, identifier(L, Id),{  Token = Id};
@@ -102,8 +103,16 @@ process(t_process(X,Y)) --> assignvalue(X), [;], process(Y); control(X), process
 process(t_process(X)) -->assignvalue(X),[;] ;control(X) ;iterate(X);print(X).
 
 print(t_print(X)) --> [show],expression(X),[;].
-% print(t_print(X)) --> [show], ["], words(X), ["],[;].
+print(t_printString(X)) --> [show], [$], value(X), [$], [;], !.
 
+value(X,Y,Z):-stringCreate(L,Y,Z),atomic_list_concat(L," ",X).
+
+stringCreate(PrintList, List, Rem) :- 
+    List = [H|T],
+    H \= '$',
+    stringCreate(X,T,Rem),
+    PrintList = [H|X].
+stringCreate([],List,List) :- List = [H|_], H = '$'.
 
 assignvalue(t_assign(X,Y)) --> identifier(X), [=] ,expression(Y); identifier(X), [is], boolexp(Y).
 
