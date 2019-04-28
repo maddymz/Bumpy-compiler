@@ -1,24 +1,25 @@
 @ test program 5 @
 start 
-    var anum;
-    var bnum;
-    var cnum;
-    anum = 123;
-    bnum = 321;
-    cnum = 0;
+    var a;
+    var b;
+    var c;
+    a = 1;
+    b = 2;
+    c = 4;
 
-    incase anum ~= bnum
+    incase a ~= b
         do 
-            anum = anum + 123;
-            when anum :=: bnum
+            a = a + 1;
+            when a :=: b
                 repeat
-                    anum = anum + 1;
-                    when anum :=: cnum
+                    a = b + 1;
+                    when a < 5
                         repeat
-                            bnum = anum;
+                            a = a + 1;
                         endrepeat
                 endrepeat
+				show a;
          otherwise
-                anum = 1;
-    endcase
-stop 
+		 show b;
+    endcase	 
+stop
