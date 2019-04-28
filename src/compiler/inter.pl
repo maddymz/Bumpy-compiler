@@ -1,10 +1,3 @@
-bumpy(FileName) :- open(FileName, read, InStream),
- 					read(InStream, X),
-		      		close(InStream),
-		      		evalParser(X, EnvOut).
-
-evalParser(X, EnvOut) :- evalProgram(X, EnvOut).
-
 evalProgram(t_program(X),EnvOut) :- evalBlock(X,[], EnvOut).
 
 evalProcess(t_process(X),EnvIn,EnvOut):-evalAssign(X,EnvIn,EnvOut).
@@ -28,23 +21,17 @@ update(X,V,[(X,_)|T],[(X,V)|T]).
 update(X,V,[H|T],[H|T1]) :- update(X,V,T,T1).
 
 % iterate
-% evalIterate(t_iterate(X,Y),EnvIn,EnvOut):-
-%     evalCond(X,Output,EnvIn,EnvIn),
-%     Output = true,
-%     evalProcess(Y,EnvIn,EnvIn2),
-%     evalIterate(t_iterate(X,Y),EnvIn2,EnvOut).
+%evalIterate(t_iterate(X,Y),EnvIn,EnvOut):-
+ %    evalCond(X,Output,EnvIn,EnvIn),
+  %   Output = true,
+   %  evalProcess(Y,EnvIn,EnvIn2),
+    % evalIterate(t_iterate(X,Y),EnvIn2,EnvOut).
 
-% evalIterate(t_iterate(X,_),EnvIn,EnvOut):-
-%     evalCond(X,Output,EnvIn,EnvIn),
-% 	Output is false,
-% 	EnvOut = EnvIn.
+%evalIterate(t_iterate(X,_),EnvIn,_):-
+ %    evalCond(X,Output,EnvIn,EnvIn),
+  %   Output = false.
 
-evalIterate(t_iterate(X,Y),EnvIn,EnvOut):- 
-    (evalCond(X,Output,EnvIn, EnvIn),Output=true -> evalProcess(Y, EnvIn, EnvIn2),
-     evalIterate(t_iterate(X,Y), EnvIn2,EnvOut)).
-evalIterate(t_iterate(X,_),EnvIn,EnvOut):- evalCond(X,Output,EnvIn, EnvIn),!,
-    Output=false, EnvOut = EnvIn.
-
+evalIterate(t_iterate(X,Y),EnvIn,EnvOut):- (evalCond(X,Output,EnvIn, EnvIn),Output=true ->  evalProcess(Y, EnvIn, EnvIn2),evalIterate(t_iterate(X,Y), EnvIn2,EnvOut));EnvOut = EnvIn.
 
 %Control
 evalControl(t_control(X,Y,_),EnvIn,EnvOut):-
@@ -54,7 +41,7 @@ evalControl(t_control(X,Y,_),EnvIn,EnvOut):-
 
 evalControl(t_control(X,_,Z),EnvIn,EnvOut):-
     evalCond(X,Output,EnvIn,EnvIn),
-    Output = false,!,
+    Output = false,
     evalProcess(Z,EnvIn,EnvOut).
 
 %Condition
@@ -162,21 +149,21 @@ evalBoolexp(t_boolexp_bneq(X,Y),Output,EnvIn,EnvIn):-
 %declaration
 evalDeclaration(t_declare(X,Y),EnvIn,EnvOut) :-
     evalDatatype(X,_,EnvIn,EnvIn),
-    evalIdentifier(Y,_,EnvIn,EnvIn,IdentName),update(IdentName,0, EnvIn, EnvOut).
+    evalIdentifier(Y,_,EnvIn,EnvIn),update(Y,0, EnvIn, EnvOut).
 
 evalDeclaration(t_declare(X,Y,Z),EnvIn,EnvOut) :-
     evalDatatype(X,_,EnvIn,EnvIn),
-    evalIdentifier(Y,_,EnvIn,EnvIn,IdentName),update(IdentName,0, EnvIn, EnvIn2),
+    evalIdentifier(Y,_,EnvIn,EnvIn),update(Y,0, EnvIn, EnvIn2),
     evalDeclaration(Z,EnvIn2,EnvOut).
 
 % assignment
 evalAssign(t_assign(X,Y),EnvIn,EnvOut):-
-    evalIdentifier(X,_,EnvIn,EnvIn,IdentName),evalExpression(Y,Output,EnvIn,EnvIn),
-    update(IdentName,Output, EnvIn,EnvOut),!.
+    evalIdentifier(X,_,EnvIn,EnvIn),evalExpression(Y,Output,EnvIn,EnvIn),
+    update(X,Output, EnvIn,EnvOut).
 
 evalAssign(t_assign(X,Y),EnvIn,EnvOut):-
-    evalIdentifier(X,_,EnvIn,EnvIn,IdentName),evalBoolexp(Y,Output,EnvIn,EnvIn),
-    update(IdentName,Output, EnvIn,EnvOut),!.
+    evalIdentifier(X,_,EnvIn,EnvIn),evalBoolexp(Y,Output,EnvIn,EnvIn),
+    update(X,Output, EnvIn,EnvOut).
 
 %expressions
 evalExpression(t_expr(X),Output,EnvIn,EnvIn):-
@@ -198,20 +185,20 @@ evalTerm(t_term(X),Output,EnvIn,EnvIn):-
     evalNum(X,Output,EnvIn,EnvIn);
     evalNumneg(X,Output,EnvIn,EnvIn),!.
 
-evalTerm(t_term(X),Output,EnvIn,EnvIn):-evalIdentifier(X,Output,EnvIn,EnvIn,_).
+evalTerm(t_term(X),Output,EnvIn,EnvIn):-evalIdentifier(X,Output,EnvIn,EnvIn).
 
 evalTerm(t_mul(X,Y),Output,EnvIn,EnvIn):-
-    evalIdentifier(X,Output1,EnvIn,EnvIn,_),
+    evalIdentifier(X,Output1,EnvIn,EnvIn),
     evalTerm(Y,Output2,EnvIn,EnvIn),
     Output is Output1 * Output2,!.
 
 evalTerm(t_div(X,Y),Output,EnvIn,EnvIn):-
-    evalIdentifier(X,Output1,EnvIn,EnvIn,_),
+    evalIdentifier(X,Output1,EnvIn,EnvIn),
     evalTerm(Y,Output2,EnvIn,EnvIn),
     Output is Output1 / Output2,!.
 
 evalTerm(t_mod(X,Y),Output,EnvIn,EnvIn):-
-    evalIdentifier(X,Output1,EnvIn,EnvIn,_),
+    evalIdentifier(X,Output1,EnvIn,EnvIn),
     evalTerm(Y,Output2,EnvIn,EnvIn),
     Output is mod(Output1,Output2),!.
 
@@ -247,5 +234,5 @@ evalTerm(t_mod(X,Y),Output,EnvIn,EnvIn):-
 
 %number , neg number and identifier done
 evalNum(t_numb(X),Output,EnvIn,EnvIn):-Output is X,!.
-evalIdentifier(t_identifier(X),Output,EnvIn,_,IdentName):-lookup(X, EnvIn, Output),!, IdentName = X.
+evalIdentifier(t_identifier(X),Output,EnvIn,_):-lookup(X, EnvIn, Output),!.
 evalNumneg(t_numbneg(X),Output,EnvIn,EnvIn):-evalNum(X,Output1,EnvIn,EnvIn),Output is 0-Output1,!.
