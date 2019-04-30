@@ -104,7 +104,7 @@ process(t_process(X,Y)) --> assignvalue(X), [;], process(Y); control(X), process
                             readValue(X), process(Y).
 process(t_process(X)) -->assignvalue(X),[;] ;control(X) ;iterate(X);print(X);readValue(X).
 
-readValue(t_read(X)) --> ["input"], identifier(X).
+readValue(t_read(X)) --> [input], identifier(X), [;].
 
 print(t_print(X)) --> [show],expression(X),[;].
 print(t_printString(X)) --> [show], [$], value(X), [$], [;], !.
