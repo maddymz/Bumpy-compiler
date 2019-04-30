@@ -107,16 +107,16 @@ process(t_process(X)) -->assignvalue(X),[;] ;control(X) ;iterate(X);print(X);rea
 readValue(t_read(X)) --> [input], identifier(X), [;].
 
 print(t_print(X)) --> [show],expression(X),[;].
-print(t_printString(X)) --> [show], [$], value(X), [$], [;], !.
+print(t_printString(X)) --> [show], [*], value(X), [*], [;], !.
 
 value(X,Y,Z):-stringCreate(L,Y,Z),atomic_list_concat(L," ",X).
 
 stringCreate(PrintList, List, Rem) :- 
     List = [H|T],
-    H \= '$',
+    H \= '*',
     stringCreate(X,T,Rem),
     PrintList = [H|X].
-stringCreate([],List,List) :- List = [H|_], H = '$'.
+stringCreate([],List,List) :- List = [H|_], H = '*'.
 
 assignvalue(t_assign(X,Y)) --> identifier(X), [=] ,expression(Y); identifier(X), [is], boolexp(Y).
 
