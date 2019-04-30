@@ -39,8 +39,8 @@ Implemented interpreter to support additional features added in language.
 Handled comments in the interpreter. 
 
 Palak Chugh :
-Started the functionality of Parser and implemented it for single character identifiers and digit.
-Started working on interpreter to handle environment variables.
+Implemented the functionality of Parser in accordance with the syntactic structure of the language.Modified it for single character identifiers and digit.
+Implemented the interpreter to handle environment variables.
 Modified interpreter according to the features added in parser.
 Started testing with different programs for created language and added example programs for the language.
 
