@@ -131,8 +131,8 @@ condition(t_cond(X)) --> boolexp(X).
 
 boolexp(t_boolexp_eq(X,Y)) --> expression(X), [:=:], expression(Y).
 boolexp(t_boolexp_neq(X,Y)) --> expression(X), [~=], expression(Y). 
-boolexp(t_boolexp_leq(X,Y)) --> expression(X), [<=], expression(Y).
-boolexp(t_boolexp_geq(X,Y)) --> expression(X), [>=], expression(Y).
+boolexp(t_boolexp_leq(X,Y)) --> expression(X), [<],[=], expression(Y).
+boolexp(t_boolexp_geq(X,Y)) --> expression(X), [>],[=], expression(Y).
 boolexp(t_boolexp_less(X,Y)) --> expression(X), [<], expression(Y).
 boolexp(t_boolexp_great(X,Y)) --> expression(X), [>], expression(Y).
 boolexp(t_boolexp_beq(X,Y)) --> expression(X), [:=:], boolexp(Y).
