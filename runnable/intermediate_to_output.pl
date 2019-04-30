@@ -249,5 +249,5 @@ bumpy(FileName) :- open(FileName, read, InStream),
 
 	%number , neg number and identifier done
 	evalNum(t_numb(X),Output,EnvIn,EnvIn):-Output is X,!.
-	evalIdentifier(t_identifier(X),Output,EnvIn,_,IdentName):-lookup(X, EnvIn, Output),!, IdentName = X.
+	evalIdentifier(t_identifier(X),Output,EnvIn,EnvIn,IdentName):-lookup(X, EnvIn, Output),!, IdentName = X.
 	evalNumneg(t_numbneg(X),Output,EnvIn,EnvIn):-evalNum(X,Output1,EnvIn,EnvIn),Output is 0-Output1,!.
