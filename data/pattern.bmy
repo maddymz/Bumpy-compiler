@@ -1,0 +1,22 @@
+@ program to print a pattern @
+start 
+    var n;
+    var i;
+    var j;
+    show *Enter number to print pattern*;
+    input n;
+    i = 1;
+    j = 1;
+	when i <= n
+    repeat
+        when j <= i
+        repeat
+            show j;
+            j = j + 1;
+        endrepeat
+        show *
+        *;
+        j = 1;
+        i = i + 1;
+    endrepeat
+stop
