@@ -1,0 +1,15 @@
+@ program to find factorial of a number @
+start
+    var fact;
+    var i;
+    fact = 1;
+    show *Enter a number to calculate factorial* ;
+    input i;   
+    when i > 0
+        repeat 
+            fact = fact * i;
+            i = i - 1;
+        endrepeat
+   show *Output is*;
+   show fact;
+stop
