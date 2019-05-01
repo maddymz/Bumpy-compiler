@@ -26,7 +26,7 @@ Visit http://www.swi-prolog.org/download/stable and download according to your s
 ## Directions to build and run 
 1. Download the repository to your local system.
 2. Open the SWI-Prolog runtime environment.
-3. Consult src/bumpy.pl by going into File-> Consult and selecting the file.
+3. Consult src/runtime/bumpy.pl by going into File-> Consult and selecting the file.
 5. Run - bumpy('<FILEPATH/Filename.bmy>').
 6. This will generate an intermediate code file with .bmic extension in the data folder and execute the code. 
 
