@@ -1,17 +1,3 @@
-compileBumpy(FileName) :- open(FileName, read, InStream),
-		      tokenCodes(InStream, TokenCodes),
-		       phrase(lexer(Tokens), TokenCodes),
-		      parser(ParseTree, Tokens, []),
-		      close(InStream),
-		      split_string(FileName, ".", "", L),
-		      L = [H|_T],
-		      atom_concat(H, ".bmic", X),
-		      open(X, write, OutStream),
-		      write(OutStream, ParseTree),
-		      write(OutStream, '.'),
-              close(OutStream).
-
-
 tokenCodes(InStream, []) :- at_end_of_stream(InStream), !.
 tokenCodes(InStream, [TokenCode|RemTokens]) :- get_code(InStream, TokenCode), tokenCodes(InStream, RemTokens).
 
@@ -125,16 +111,16 @@ readValue(t_read(IdentifierNode)) --> [input], identifier(IdentifierNode), [;].
 
 %Rules for printing values
 print(t_print(ExpressionNode)) --> [show], expression(ExpressionNode),[;].
-print(t_printString(ValueNode)) --> [show], [*], value(ValueNode), [*], [;], !.
+print(t_printString(X)) --> [show], [*], value(X), [*], [;], !.
 
-value(ValueNode, ListNode, RemListNode) :- stringCreate(PrintListNode, ListNode, RemListNode), atomic_list_concat(PrintListNode," ", ValueNode).
+value(X,Y,Z):-stringCreate(L,Y,Z),atomic_list_concat(L," ",X).
 
-stringCreate(PrintListNode, ListNode, RemListNode) :- 
-    ListNode = [Head|Tail],
-    Head \= '*',
-    stringCreate(Final, Tail, RemListNode),
-    PrintListNode = [Head|Final].
-stringCreate([], ListNode, ListNode) :- ListNode = [Head|_], Head = '*'.
+stringCreate(PrintList, List, Rem) :- 
+    List = [H|T],
+    H \= '*',
+    stringCreate(X,T,Rem),
+    PrintList = [H|X].
+stringCreate([],List,List) :- List = [H|_], H = '*'.
 
 %Rules for assigning values
 assignvalue(t_assign(IdentifierNode, ExpressionNode)) --> identifier(IdentifierNode), [=] ,expression(ExpressionNode), [;].

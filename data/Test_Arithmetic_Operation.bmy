@@ -4,12 +4,12 @@ start
     var b;
     var c;
     
-    show *This program test arithmetic operations*;
+    show *this is here*;
     input a;
     input b;
     c = a + b;
 
-    show *Output is*; 
+    show *output is*; 
     show c + 8;
 stop
 
