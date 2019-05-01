@@ -1,0 +1,15 @@
+@ test program 1 @
+start 
+    var a;
+    var b;
+    var c;
+    
+    show *This program test arithmetic operations*;
+    input a;
+    input b;
+    c = a + b;
+
+    show *Output is*; 
+    show c + 8;
+stop
+
