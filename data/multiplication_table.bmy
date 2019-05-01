@@ -1,0 +1,17 @@
+@ program to generate multiplication table @
+start
+    var n;
+    var i;
+    i=1;
+    show *Enter a number*;
+    input n;
+    show *Multiplication table of*;
+    show n;
+    show * is *;
+    when i <= 10
+        repeat 
+            show n*i;
+            show * *;
+            i = i + 1;
+        endrepeat
+stop
