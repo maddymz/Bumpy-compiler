@@ -1,0 +1,31 @@
+@ program to find largest of three numbers @
+start
+    var a;
+    var b;
+    var c;
+    show *Enter three numbers*;
+    input a;
+    input b;
+    input c;
+    incase a >= b
+        do    
+           incase a >=c
+              do 
+                 show *The largest number is*;
+                 show a;
+	      otherwise
+                 show *The largest number is*;
+                 show c;
+          endcase
+        otherwise
+            incase b >=c
+              do 
+                 show *The largest number is*;
+                 show b;
+	      otherwise
+                 show *The largest number is*;
+                 show c;
+          endcase
+
+    endcase
+stop
