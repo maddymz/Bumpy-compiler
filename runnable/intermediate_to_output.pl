@@ -1,253 +1,254 @@
 :- style_check(-singleton).
 
 bumpy(FileName) :- open(FileName, read, InStream),
- 					read(InStream, X),
+ 					read(InStream, InputData),
 		      		close(InStream),
-		      		evalParser(X, EnvOut).
+		      		evalParser(InputData, EnvOut).
 
-	evalParser(X, EnvOut) :- evalProgram(X,[],EnvOut).
+	%Rules to evaluate the parser.
+	evalParser(ProgramNode, EnvOut) :- evalProgram(ProgramNode,[],EnvOut).
 
-	evalProgram(t_program(_,Y),EnvIn, EnvOut) :-evalBlock(Y,EnvIn, EnvOut),!.
-	evalProgram(t_program(X),EnvIn, EnvOut) :- evalBlock(X,EnvIn, EnvOut),!.
-
-	evalProcess(t_process(X),EnvIn,EnvOut):-evalPrint(X,EnvIn, EnvOut),!.
-	evalProcess(t_process(X),EnvIn,EnvOut):-evalAssign(X,EnvIn,EnvOut),!.
-	evalProcess(t_process(X),EnvIn,EnvOut):-evalIterate(X,EnvIn,EnvOut),!.
-	evalProcess(t_process(X),EnvIn,EnvOut):-evalControl(X,EnvIn,EnvOut),!.
-	evalProcess(t_process(X),EnvIn,EnvOut):-evalRead(X,EnvIn,EnvOut),!.
-	evalProcess(t_process(X,Y),EnvIn,EnvOut):-evalAssign(X,EnvIn,EnvIn2),
-	evalProcess(Y,EnvIn2,EnvOut),!.
-	evalProcess(t_process(X,Y),EnvIn,EnvOut):-evalIterate(X,EnvIn,EnvIn2),
-	evalProcess(Y,EnvIn2,EnvOut),!.
-	evalProcess(t_process(X,Y),EnvIn,EnvOut):-evalControl(X,EnvIn,EnvIn2),
-	evalProcess(Y,EnvIn2,EnvOut),!.
-	evalProcess(t_process(X,Y), EnvIn, EnvOut) :- evalPrint(X,EnvIn,EnvIn2),
-	evalProcess(Y,EnvIn2, EnvOut),!.
-	evalProcess(t_process(X,Y), EnvIn, EnvOut) :- evalRead(X, EnvIn, EnvIn2),
-	evalProcess(Y,EnvIn2,EnvOut).
-
-	% Read statement
-	evalRead(t_read(X), EnvIn, EnvOut):- read(Term), evalIdentifier(X,_,EnvIn,EnvIn2,IdentName), 
+	% Rules to read statements.
+	evalRead(t_read(IdentifierNode), EnvIn, EnvOut):- read(Term), evalIdentifier(IdentifierNode,_,EnvIn,EnvIn2,IdentName), 
 										update(IdentName, Term, EnvIn2, EnvOut).
 
-	% Look up the environment to find the value of a variable
+	% Look up the environment to find the value of an identifier
 	lookup(_,[],0).
-	lookup(X,[(X, V)|_],V).
-	lookup(X,[_|T],V) :- lookup(X,T,V).
+	lookup(Key,[(Key, Value)|_],Value).
+	lookup(Key,[_|Tail],Value) :- lookup(Key,Tail,Value).
 
-	% Update the env with new values of variables
-	update(X,V,[],[(X,V)]).
-	update(X,V,[(X,_)|T],[(X,V)|T]).
-	update(X,V,[H|T],[H|T1]) :- update(X,V,T,T1).
-
-	% iterate
-	evalIterate(t_iterate(X,Y),EnvIn,EnvOut):- (evalCond(X,Output,EnvIn, EnvIn),Output=true ->  evalProcess(Y, EnvIn, EnvIn2),evalIterate(t_iterate(X,Y), EnvIn2,EnvOut)).
-	evalIterate(t_iterate(X,_),EnvIn,EnvOut):- evalCond(X,Output,EnvIn, EnvIn),Output=false,!, EnvOut = EnvIn.
+	% Update the environment with new value of an identifier.
+	update(Key,Value,[],[(Key,Value)]).
+	update(Key,Value,[(Key,_)|Tail],[(Key,Value)|T]).
+	update(Key,Value,[Head|Tail],[Head|Tail1]) :- update(Key,Value,Tail,Tail1).
 
 	% Rules to evaluate print statements.
-	evalPrint(t_print(X),EnvIn,EnvOut) :-  evalExpression(X,Output,EnvIn,EnvOut), write(Output).
-	evalPrint(t_printString(X), EnvIn, EnvIn) :- write(X), write(" "),!.
+	evalPrint(t_print(ExpressionNode),EnvIn,EnvOut) :-  evalExpression(ExpressionNode,Output,EnvIn,EnvOut), write(Output).
+	evalPrint(t_printString(ValueNode), EnvIn, EnvIn) :- write(ValueNode), write(" "),!.
 
-	%Control
-	evalControl(t_control(X,Y,_),EnvIn,EnvOut):-
-	evalCond(X,Output,EnvIn,EnvIn),
+	%Rules to evaluate program.
+	evalProgram(t_program(_,BlockNode),EnvIn, EnvOut) :-evalBlock(BlockNode,EnvIn, EnvOut),!.
+	evalProgram(t_program(BlockNode),EnvIn, EnvOut) :- evalBlock(BlockNode,EnvIn, EnvOut),!.
+
+	%Rules to evaluate block statements.
+	evalBlock(t_block(DeclareNode,ProcessNode),EnvIn,EnvOut) :-
+	evalDeclaration(DeclareNode,EnvIn,EnvIn2),
+	evalProcess(ProcessNode,EnvIn2,EnvOut).
+
+	%Rules to evaluate data type statements.
+	evalDatatype(t_datatype(var),Output,EnvIn,EnvIn):-Output=var,!.
+	evalDatatype(t_datatype(bool),Output,EnvIn,EnvIn):-Output=bool,!.
+
+
+	%Rules to evaluate declaration statements.
+	evalDeclaration(t_declare(DataTypeNode,IdentifierNode),EnvIn,EnvOut) :-
+	evalDatatype(DataTypeNode,_,EnvIn,EnvIn),
+	evalIdentifier(IdentifierNode,_,EnvIn,EnvIn,IdentName),update(IdentName,0, EnvIn, EnvOut).
+
+	evalDeclaration(t_declare(DataTypeNode,IdentifierNode,DeclareNode),EnvIn,EnvOut) :-
+	evalDatatype(DataTypeNode,_,EnvIn,EnvIn),
+	evalIdentifier(IdentifierNode,_,EnvIn,EnvIn,IdentName),update(IdentName,0, EnvIn, EnvIn2),
+	evalDeclaration(DeclareNode,EnvIn2,EnvOut).
+
+	%Rules to evaluate process statements.
+	evalProcess(t_process(ConstructNode),EnvIn,EnvOut):-evalPrint(ConstructNode,EnvIn, EnvOut),!.
+	evalProcess(t_process(ConstructNode),EnvIn,EnvOut):-evalAssign(ConstructNode,EnvIn,EnvOut),!.
+	evalProcess(t_process(ConstructNode),EnvIn,EnvOut):-evalIterate(ConstructNode,EnvIn,EnvOut),!.
+	evalProcess(t_process(ConstructNode),EnvIn,EnvOut):-evalControl(ConstructNode,EnvIn,EnvOut),!.
+	evalProcess(t_process(ConstructNode),EnvIn,EnvOut):-evalRead(ConstructNode,EnvIn,EnvOut),!.
+	evalProcess(t_process(ConstructNode,ProcessNode),EnvIn,EnvOut):-evalAssign(ConstructNode,EnvIn,EnvIn2),
+	evalProcess(ProcessNode,EnvIn2,EnvOut),!.
+	evalProcess(t_process(ConstructNode,ProcessNode),EnvIn,EnvOut):-evalIterate(ConstructNode,EnvIn,EnvIn2),
+	evalProcess(ProcessNode,EnvIn2,EnvOut),!.
+	evalProcess(t_process(ConstructNode,ProcessNode),EnvIn,EnvOut):-evalControl(ConstructNode,EnvIn,EnvIn2),
+	evalProcess(ProcessNode,EnvIn2,EnvOut),!.
+	evalProcess(t_process(ConstructNode,ProcessNode), EnvIn, EnvOut) :- evalPrint(ConstructNode,EnvIn,EnvIn2),
+	evalProcess(ProcessNode,EnvIn2, EnvOut),!.
+	evalProcess(t_process(ConstructNode,ProcessNode), EnvIn, EnvOut) :- evalRead(ConstructNode, EnvIn, EnvIn2),
+	evalProcess(ProcessNode,EnvIn2,EnvOut).
+
+	% Rules to evaluate assignment statements.
+	evalAssign(t_assign(IdentifierNode,ExpressionNode),EnvIn,EnvOut):-
+	evalIdentifier(IdentifierNode,_,EnvIn,EnvIn,IdentName),evalExpression(ExpressionNode,Output,EnvIn,EnvIn),
+	update(IdentName,Output, EnvIn,EnvOut),!.
+
+	evalAssign(t_assign(IdentifierNode,ExpressionNode),EnvIn,EnvOut):-
+	evalIdentifier(IdentifierNode,_,EnvIn,EnvIn,IdentName),evalBoolexp(ExpressionNode,Output,EnvIn,EnvIn),
+	update(IdentName,Output, EnvIn,EnvOut),!.
+
+	%Rules to evaluate control statements.
+	evalControl(t_control(ConditionNode,ProcessNode,_),EnvIn,EnvOut):-
+	evalCond(ConditionNode,Output,EnvIn,EnvIn),
 	Output = true,
-	evalProcess(Y,EnvIn,EnvOut).
+	evalProcess(ProcessNode,EnvIn,EnvOut).
 
-	evalControl(t_control(X,_,Z),EnvIn,EnvOut):-
-	evalCond(X,Output,EnvIn,EnvIn),
+	evalControl(t_control(ConditionNode,_,ProcessNode),EnvIn,EnvOut):-
+	evalCond(ConditionNode,Output,EnvIn,EnvIn),
 	Output = false,!,
-	evalProcess(Z,EnvIn,EnvOut).
+	evalProcess(ProcessNode,EnvIn,EnvOut).
 
-	%Condition
-	evalCond(t_cond(X),Output,EnvIn,EnvIn):-evalBoolexp(X,Output,EnvIn,EnvIn),!.
-	evalCond(t_cond_not(X),Output,EnvIn,EnvIn):-
-	evalBoolexp(X,BoolOutput,EnvIn,EnvIn),
+	% Rules to evaluate looping construct.
+	evalIterate(t_iterate(ConditionNode,ProcessNode),EnvIn,EnvOut):- (evalCond(ConditionNode,Output,EnvIn, EnvIn),Output=true ->  evalProcess(ProcessNode, EnvIn, EnvIn2),evalIterate(t_iterate(ConditionNode,ProcessNode), EnvIn2,EnvOut)).
+	evalIterate(t_iterate(ConditionNode,_),EnvIn,EnvOut):- evalCond(ConditionNode,Output,EnvIn, EnvIn),Output=false,!, EnvOut = EnvIn.
+
+	%Rules to evaluate condition statements.
+	evalCond(t_cond(ExpressionNode),Output,EnvIn,EnvIn):-evalBoolexp(ExpressionNode,Output,EnvIn,EnvIn),!.
+	evalCond(t_cond_not(ExpressionNode),Output,EnvIn,EnvIn):-
+	evalBoolexp(ExpressionNode,BoolOutput,EnvIn,EnvIn),
 	BoolOutput = true,
 	Output = false,!.
 
-	evalCond(t_cond_not(X),Output,EnvIn,EnvIn):-
-	evalBoolexp(X,BoolOutput,EnvIn,EnvIn),
+	evalCond(t_cond_not(ExpressionNode),Output,EnvIn,EnvIn):-
+	evalBoolexp(ExpressionNode,BoolOutput,EnvIn,EnvIn),
 	BoolOutput = false,
 	Output = true,!.
 
-	evalCond(t_cond_and(X,Y),Output,EnvIn,EnvIn):-
-	evalBoolexp(X,BoolOutput1,EnvIn,EnvIn),
-	evalBoolexp(Y,BoolOutput2,EnvIn,EnvIn),
+	evalCond(t_cond_and(ExpressionNode,ExpressionNode1),Output,EnvIn,EnvIn):-
+	evalBoolexp(ExpressionNode,BoolOutput1,EnvIn,EnvIn),
+	evalBoolexp(ExpressionNode1,BoolOutput2,EnvIn,EnvIn),
 	BoolOutput1 = true,
 	BoolOutput2 = true,
 	Output = true; Output = false,!.
 
-	evalCond(t_cond_or(X,Y),Output,EnvIn,EnvIn):-
-	evalBoolexp(X,BoolOutput1,EnvIn,EnvIn),
-	evalBoolexp(Y,BoolOutput2,EnvIn,EnvIn),
+	evalCond(t_cond_or(ExpressionNode,ExpressionNode1),Output,EnvIn,EnvIn):-
+	evalBoolexp(ExpressionNode,BoolOutput1,EnvIn,EnvIn),
+	evalBoolexp(ExpressionNode1,BoolOutput2,EnvIn,EnvIn),
 	BoolOutput1 = true,
 	BoolOutput2 = false,
 	Output = true,!.
 
-	evalCond(t_cond_or(X,Y),Output,EnvIn,EnvIn):-
-	evalBoolexp(X,BoolOutput1,EnvIn,EnvIn),
-	evalBoolexp(Y,BoolOutput2,EnvIn,EnvIn),
+	evalCond(t_cond_or(ExpressionNode,ExpressionNode1),Output,EnvIn,EnvIn):-
+	evalBoolexp(ExpressionNode,BoolOutput1,EnvIn,EnvIn),
+	evalBoolexp(ExpressionNode1,BoolOutput2,EnvIn,EnvIn),
 	BoolOutput2 = true,
 	BoolOutput1 = false,
 	Output = true,!.
 
-	evalCond(t_cond_or(X,Y),Output,EnvIn,EnvIn):-
-	evalBoolexp(X,BoolOutput1,EnvIn,EnvIn),
-	evalBoolexp(Y,BoolOutput2,EnvIn,EnvIn),
+	evalCond(t_cond_or(ExpressionNode,ExpressionNode1),Output,EnvIn,EnvIn):-
+	evalBoolexp(ExpressionNode,BoolOutput1,EnvIn,EnvIn),
+	evalBoolexp(ExpressionNode1,BoolOutput2,EnvIn,EnvIn),
 	BoolOutput1 = true,
 	BoolOutput2 = true,
 	Output = true,!.
 
-	evalCond(t_cond_or(X,Y),Output,EnvIn,EnvIn):-
-	evalBoolexp(X,BoolOutput1,EnvIn,EnvIn),
-	evalBoolexp(Y,BoolOutput2,EnvIn,EnvIn),
+	evalCond(t_cond_or(ExpressionNode,ExpressionNode1),Output,EnvIn,EnvIn):-
+	evalBoolexp(ExpressionNode,BoolOutput1,EnvIn,EnvIn),
+	evalBoolexp(ExpressionNode1,BoolOutput2,EnvIn,EnvIn),
 	BoolOutput1 = false,
 	BoolOutput2 = false,
 	Output = false,!.
 
-					
-
-	%Block
-	evalBlock(t_block(X,Y),EnvIn,EnvOut) :-
-	evalDeclaration(X,EnvIn,EnvIn2),
-	evalProcess(Y,EnvIn2,EnvOut).
-
-	%datatype
-	evalDatatype(t_datatype(var),Output,EnvIn,EnvIn):-Output=var,!.
-	evalDatatype(t_datatype(bool),Output,EnvIn,EnvIn):-Output=bool,!.
-
-	%bool expression
+	%Rules to evaluate boolean expressions.
 	evalBoolexp(t_boolexp(yes),true,EnvIn,EnvIn).
 	evalBoolexp(t_boolexp(no),false,EnvIn,EnvIn).
-	evalBoolexp(t_boolexp_eq(X,Y),Output,EnvIn,EnvIn):-
-	evalExpression(X,Output1,EnvIn,EnvIn),
-	evalExpression(Y,Output2,EnvIn,EnvIn),
+	evalBoolexp(t_boolexp_eq(ExpressionNode,ExpressionNode1),Output,EnvIn,EnvIn):-
+	evalExpression(ExpressionNode,Output1,EnvIn,EnvIn),
+	evalExpression(ExpressionNode1,Output2,EnvIn,EnvIn),
 	Output1 =:= Output2, Output = true; Output = false,!.
 
-	evalBoolexp(t_boolexp_neq(X,Y),Output,EnvIn,EnvIn):-
-	evalExpression(X,Output1,EnvIn,EnvIn),
-	evalExpression(Y,Output2,EnvIn,EnvIn),
+	evalBoolexp(t_boolexp_neq(ExpressionNode,ExpressionNode1),Output,EnvIn,EnvIn):-
+	evalExpression(ExpressionNode,Output1,EnvIn,EnvIn),
+	evalExpression(ExpressionNode1,Output2,EnvIn,EnvIn),
 	Output1 =\= Output2, Output = true; Output = false,!.
 
-	evalBoolexp(t_boolexp_geq(X,Y),Output,EnvIn,EnvIn):-
-	evalExpression(X,Output1,EnvIn,EnvIn),
-	evalExpression(Y,Output2,EnvIn,EnvIn),
+	evalBoolexp(t_boolexp_geq(ExpressionNode,ExpressionNode1),Output,EnvIn,EnvIn):-
+	evalExpression(ExpressionNode,Output1,EnvIn,EnvIn),
+	evalExpression(ExpressionNode1,Output2,EnvIn,EnvIn),
 	Output1 >= Output2, Output = true; Output = false,!.
 
-	evalBoolexp(t_boolexp_leq(X,Y),Output,EnvIn,EnvIn):-
-	evalExpression(X,Output1,EnvIn,EnvIn),
-	evalExpression(Y,Output2,EnvIn,EnvIn),
+	evalBoolexp(t_boolexp_leq(ExpressionNode,ExpressionNode1),Output,EnvIn,EnvIn):-
+	evalExpression(ExpressionNode,Output1,EnvIn,EnvIn),
+	evalExpression(ExpressionNode1,Output2,EnvIn,EnvIn),
 	Output1 =< Output2, Output = true; Output = false,!.
 
-	evalBoolexp(t_boolexp_less(X,Y),Output,EnvIn,EnvIn):-
-	evalExpression(X,Output1,EnvIn,EnvIn),
-	evalExpression(Y,Output2,EnvIn,EnvIn),
+	evalBoolexp(t_boolexp_less(ExpressionNode,ExpressionNode1),Output,EnvIn,EnvIn):-
+	evalExpression(ExpressionNode,Output1,EnvIn,EnvIn),
+	evalExpression(ExpressionNode1,Output2,EnvIn,EnvIn),
 	Output1 < Output2, Output = true; Output = false,!.
 
-	evalBoolexp(t_boolexp_great(X,Y),Output,EnvIn,EnvIn):-
-	evalExpression(X,Output1,EnvIn,EnvIn),
-	evalExpression(Y,Output2,EnvIn,EnvIn),
+	evalBoolexp(t_boolexp_great(ExpressionNode,ExpressionNode1),Output,EnvIn,EnvIn):-
+	evalExpression(ExpressionNode,Output1,EnvIn,EnvIn),
+	evalExpression(ExpressionNode1,Output2,EnvIn,EnvIn),
 	Output1 > Output2, Output = true; Output = false,!.
 
-	evalBoolexp(t_boolexp_beq(X,Y),Output,EnvIn,EnvIn):-
-	evalExpression(X,Output1,EnvIn,EnvIn),
-	evalBoolexp(Y,Output2,EnvIn,EnvIn),
+	evalBoolexp(t_boolexp_beq(ExpressionNode,ExpressionNode1),Output,EnvIn,EnvIn):-
+	evalExpression(ExpressionNode,Output1,EnvIn,EnvIn),
+	evalBoolexp(ExpressionNode1,Output2,EnvIn,EnvIn),
 	Output1 =:= Output2, Output = true; Output = false,!.
 
-	evalBoolexp(t_boolexp_bneq(X,Y),Output,EnvIn,EnvIn):-
-	evalExpression(X,Output1,EnvIn,EnvIn),
-	evalBoolexp(Y,Output2,EnvIn,EnvIn),
+	evalBoolexp(t_boolexp_bneq(ExpressionNode,ExpressionNode1),Output,EnvIn,EnvIn):-
+	evalExpression(ExpressionNode,Output1,EnvIn,EnvIn),
+	evalBoolexp(ExpressionNode1,Output2,EnvIn,EnvIn),
 	Output1 =\= Output2, Output = true; Output = false,!.
 
-
-	%declaration
-	evalDeclaration(t_declare(X,Y),EnvIn,EnvOut) :-
-	evalDatatype(X,_,EnvIn,EnvIn),
-	evalIdentifier(Y,_,EnvIn,EnvIn,IdentName),update(IdentName,0, EnvIn, EnvOut).
-
-	evalDeclaration(t_declare(X,Y,Z),EnvIn,EnvOut) :-
-	evalDatatype(X,_,EnvIn,EnvIn),
-	evalIdentifier(Y,_,EnvIn,EnvIn,IdentName),update(IdentName,0, EnvIn, EnvIn2),
-	evalDeclaration(Z,EnvIn2,EnvOut).
-
-	% assignment
-	evalAssign(t_assign(X,Y),EnvIn,EnvOut):-
-	evalIdentifier(X,_,EnvIn,EnvIn,IdentName),evalExpression(Y,Output,EnvIn,EnvIn),
-	update(IdentName,Output, EnvIn,EnvOut),!.
-
-	evalAssign(t_assign(X,Y),EnvIn,EnvOut):-
-	evalIdentifier(X,_,EnvIn,EnvIn,IdentName),evalBoolexp(Y,Output,EnvIn,EnvIn),
-	update(IdentName,Output, EnvIn,EnvOut),!.
-
-	%expressions
-	evalExpression(t_expr(X),Output,EnvIn,EnvIn):-
-	evalTerm(X,Output,EnvIn,EnvIn).
+	% Rules to evaluate expressions.
+	evalExpression(t_expr(TermNode),Output,EnvIn,EnvIn):-
+	evalTerm(TermNode,Output,EnvIn,EnvIn).
 
 
-	evalExpression(t_add(X,Y),Output,EnvIn,EnvIn):- 
-	evalTerm(X,Output1,EnvIn,EnvIn),
-	evalExpression(Y,Output2,EnvIn,EnvIn),
+	evalExpression(t_add(TermNode,ExpressionNode),Output,EnvIn,EnvIn):- 
+	evalTerm(TermNode,Output1,EnvIn,EnvIn),
+	evalExpression(ExpressionNode,Output2,EnvIn,EnvIn),
 	Output is Output1 + Output2,!.
 
-	evalExpression(t_sub(X,Y),Output,EnvIn,EnvIn):- 
-	evalTerm(X,Output1,EnvIn,EnvIn),
-	evalExpression(Y,Output2,EnvIn,EnvIn),
+	evalExpression(t_sub(TermNode,ExpressionNode),Output,EnvIn,EnvIn):- 
+	evalTerm(TermNode,Output1,EnvIn,EnvIn),
+	evalExpression(ExpressionNode,Output2,EnvIn,EnvIn),
 	Output is Output1 - Output2,!.
 
-	%terms
-	evalTerm(t_term(X),Output,EnvIn,EnvIn):-
-	evalNum(X,Output,EnvIn,EnvIn);
-	evalNumneg(X,Output,EnvIn,EnvIn),!.
+	% Rules to evaluate terms.
+	evalTerm(t_term(IdentNumNode),Output,EnvIn,EnvIn):-
+	evalNum(IdentNumNode,Output,EnvIn,EnvIn);
+	evalNumneg(IdentNumNode,Output,EnvIn,EnvIn),!.
 
-	evalTerm(t_term(X),Output,EnvIn,EnvIn):-evalIdentifier(X,Output,EnvIn,EnvIn,_).
+	evalTerm(t_term(IdentNumNode),Output,EnvIn,EnvIn):-evalIdentifier(IdentNumNode,Output,EnvIn,EnvIn,_).
 
-	evalTerm(t_mul(X,Y),Output,EnvIn,EnvIn):-
-	evalIdentifier(X,Output1,EnvIn,EnvIn,_),
-	evalTerm(Y,Output2,EnvIn,EnvIn),
+	evalTerm(t_mul(IdentNumNode,TermNode),Output,EnvIn,EnvIn):-
+	evalIdentifier(IdentNumNode,Output1,EnvIn,EnvIn,_),
+	evalTerm(TermNode,Output2,EnvIn,EnvIn),
 	Output is Output1 * Output2,!.
 
-	evalTerm(t_div(X,Y),Output,EnvIn,EnvIn):-
-	evalIdentifier(X,Output1,EnvIn,EnvIn,_),
-	evalTerm(Y,Output2,EnvIn,EnvIn),
+	evalTerm(t_div(IdentNumNode,TermNode),Output,EnvIn,EnvIn):-
+	evalIdentifier(IdentNumNode,Output1,EnvIn,EnvIn,_),
+	evalTerm(TermNode,Output2,EnvIn,EnvIn),
 	Output is Output1 / Output2,!.
 
-	evalTerm(t_mod(X,Y),Output,EnvIn,EnvIn):-
-	evalIdentifier(X,Output1,EnvIn,EnvIn,_),
-	evalTerm(Y,Output2,EnvIn,EnvIn),
+	evalTerm(t_mod(IdentNumNode,TermNode),Output,EnvIn,EnvIn):-
+	evalIdentifier(IdentNumNode,Output1,EnvIn,EnvIn,_),
+	evalTerm(TermNode,Output2,EnvIn,EnvIn),
 	Output is mod(Output1,Output2),!.
 
-	evalTerm(t_mul(X,Y),Output,EnvIn,EnvIn):-
-	evalNum(X,Output1,EnvIn,EnvIn),
-	evalTerm(Y,Output2,EnvIn,EnvIn),
+	evalTerm(t_mul(IdentNumNode,TermNode),Output,EnvIn,EnvIn):-
+	evalNum(IdentNumNode,Output1,EnvIn,EnvIn),
+	evalTerm(TermNode,Output2,EnvIn,EnvIn),
 	Output is Output1 * Output2,!.
 
-	evalTerm(t_div(X,Y),Output,EnvIn,EnvIn):-
-	evalNum(X,Output1,EnvIn,EnvIn),
-	evalTerm(Y,Output2,EnvIn,EnvIn),
+	evalTerm(t_div(IdentNumNode,TermNode),Output,EnvIn,EnvIn):-
+	evalNum(IdentNumNode,Output1,EnvIn,EnvIn),
+	evalTerm(TermNode,Output2,EnvIn,EnvIn),
 	Output is Output1 / Output2,!.
 
-	evalTerm(t_mod(X,Y),Output,EnvIn,EnvIn):-
-	evalNum(X,Output1,EnvIn,EnvIn),
-	evalTerm(Y,Output2,EnvIn,EnvIn),
+	evalTerm(t_mod(IdentNumNode,TermNode),Output,EnvIn,EnvIn):-
+	evalNum(IdentNumNode,Output1,EnvIn,EnvIn),
+	evalTerm(TermNode,Output2,EnvIn,EnvIn),
 	Output is mod(Output1,Output2),!.
 
-	evalTerm(t_mul(X,Y),Output,EnvIn,EnvIn):-
-	evalNumneg(X,Output1,EnvIn,EnvIn),
-	evalTerm(Y,Output2,EnvIn,EnvIn),
+	evalTerm(t_mul(IdentNumNode,TermNode),Output,EnvIn,EnvIn):-
+	evalNumneg(IdentNumNode,Output1,EnvIn,EnvIn),
+	evalTerm(TermNode,Output2,EnvIn,EnvIn),
 	Output is Output1 * Output2,!.
 
-	evalTerm(t_div(X,Y),Output,EnvIn,EnvIn):-
-	evalNumneg(X,Output1,EnvIn,EnvIn),
-	evalTerm(Y,Output2,EnvIn,EnvIn),
+	evalTerm(t_div(IdentNumNode,TermNode),Output,EnvIn,EnvIn):-
+	evalNumneg(IdentNumNode,Output1,EnvIn,EnvIn),
+	evalTerm(TermNode,Output2,EnvIn,EnvIn),
 	Output is Output1 / Output2,!.
 
-	evalTerm(t_mod(X,Y),Output,EnvIn,EnvIn):-
-	evalNumneg(X,Output1,EnvIn,EnvIn),
-	evalTerm(Y,Output2,EnvIn,EnvIn),
+	evalTerm(t_mod(IdentNumNode,TermNode),Output,EnvIn,EnvIn):-
+	evalNumneg(IdentNumNode,Output1,EnvIn,EnvIn),
+	evalTerm(TermNode,Output2,EnvIn,EnvIn),
 	Output is mod(Output1,Output2),!.
 
-	%number , neg number and identifier done
-	evalNum(t_numb(X),Output,EnvIn,EnvIn):-Output is X,!.
-	evalIdentifier(t_identifier(X),Output,EnvIn,EnvIn,IdentName):-lookup(X, EnvIn, Output),!, IdentName = X.
-	evalNumneg(t_numbneg(X),Output,EnvIn,EnvIn):-evalNum(X,Output1,EnvIn,EnvIn),Output is 0-Output1,!.
+	%number, negative number and identifier
+	evalNum(t_numb(NumNode),Output,EnvIn,EnvIn):-Output is NumNode,!.
+	evalIdentifier(t_identifier(IdentifierNode),Output,EnvIn,EnvIn,IdentName):-lookup(IdentifierNode, EnvIn, Output),!, IdentName = IdentifierNode.
+	evalNumneg(t_numbneg(NumNode),Output,EnvIn,EnvIn):-evalNum(NumNode,Output1,EnvIn,EnvIn),Output is 0-Output1,!.
