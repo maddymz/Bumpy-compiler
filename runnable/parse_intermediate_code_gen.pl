@@ -64,96 +64,96 @@ lexer(Tokens) -->
 white_space --> [Char], { code_type(Char,space) }, !, white_space.
 white_space --> [].
 
-digit(D) --> [D],{ code_type(D, digit) }.
-digits([D|T]) --> digit(D),!,digits(T).
+digit(Digit) --> [Digit],{ code_type(Digit, digit) }.
+digits([Digit|DigitTail]) --> digit(Digit),!,digits(DigitTail).
 digits([]) -->[].
 
-number(D, N) --> digits(Ds),{ number_chars(N, [D|Ds]) }.
+number(Digit, Number) --> digits(DigitRem),{ number_chars(Number, [Digit|DigitRem]) }.
 
-upletter(L) -->[L], { code_type(L, upper) }.
+upletter(Letter) -->[Letter], { code_type(Letter, upper) }.
 
-lowletter(L) -->[L], { code_type(L, lower) }.
+lowletter(Letter) -->[Letter], { code_type(Letter, lower) }.
 
-alphanum([A|T]) -->[A], { code_type(A, csym) }, !, alphanum(T).
+alphanum([Alphanum|AlphaTail]) -->[Alphanum], { code_type(Alphanum, csym) }, !, alphanum(AlphaTail).
 alphanum([]) -->[].
 
-identifier(L, Id) -->alphanum(As),{ atom_codes(Id, [L|As]) }.
+identifier(IdentList, Ident) -->alphanum(IdentTail),{ atom_codes(Ident, [IdentList|IdentTail]) }.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-parser(X) --> program(X).
+parser(ProgramNode) --> program(ProgramNode).
 
-program(t_program(X,Y)) -->comment(X),block(Y).
-program(t_program(X)) -->block(X).
+program(t_program(CommentNode,BlockNode)) -->comment(CommentNode),block(BlockNode).
+program(t_program(BlockNode)) -->block(BlockNode).
 
-comment(t_comment(Y)) --> [@],words(Y),[@].
+comment(t_comment(WordNode)) --> [@],words(WordNode),[@].
 
-words(t_words(X,Y)) --> identifier(X), words(Y) ; numb(X), words(Y).
-words(t_words(X)) -->identifier(X); numb(X).
+words(t_words(IdentNumNode,WordNode)) --> identifier(IdentNumNode), words(WordNode) ; numb(IdentNumNode), words(WordNode).
+words(t_words(IdentNumNode)) -->identifier(IdentNumNode); numb(IdentNumNode).
 
-block(t_block(X,Y)) --> [start], declaration(X), process(Y), [stop].
+block(t_block(DeclareNode,ProcessNode)) --> [start], declaration(DeclareNode), process(ProcessNode), [stop].
 
 datatype(t_datatype(var)) --> [var].
 datatype(t_datatype(bool)) --> [bool].
 
-declaration(t_declare(X,Y,Z)) --> datatype(X), identifier(Y), [;], declaration(Z).    
-declaration(t_declare(X,Y)) -->datatype(X),identifier(Y),[;].
+declaration(t_declare(DataTypeNode,IdentifierNode,DeclareNode)) --> datatype(DataTypeNode), identifier(IdentifierNode), [;], declaration(DeclareNode).    
+declaration(t_declare(DataTypeNode,IdentifierNode)) -->datatype(DataTypeNode),identifier(IdentifierNode),[;].
 
-process(t_process(X,Y)) --> assignvalue(X), [;], process(Y); control(X), process(Y); iterate(X), process(Y); print(X), process(Y);
-                            readValue(X), process(Y).
-process(t_process(X)) -->assignvalue(X),[;] ;control(X) ;iterate(X);print(X);readValue(X).
+process(t_process(ConstructNode,ProcessNode)) --> assignvalue(ConstructNode), [;], process(ProcessNode); control(ConstructNode), process(ProcessNode); iterate(ConstructNode), process(ProcessNode); print(ConstructNode), process(ProcessNode);
+                            readValue(ConstructNode), process(ProcessNode).
+process(t_process(ConstructNode)) -->assignvalue(ConstructNode),[;] ;control(ConstructNode) ;iterate(ConstructNode);print(ConstructNode);readValue(ConstructNode).
 
-readValue(t_read(X)) --> [input], identifier(X), [;].
+readValue(t_read(IdentifierNode)) --> [input], identifier(IdentifierNode), [;].
 
-print(t_print(X)) --> [show],expression(X),[;].
-print(t_printString(X)) --> [show], [*], value(X), [*], [;], !.
+print(t_print(ExpressionNode)) --> [show],expression(ExpressionNode),[;].
+print(t_printString(ValueNode)) --> [show], [*], value(ValueNode), [*], [;], !.
 
-value(X,Y,Z):-stringCreate(L,Y,Z),atomic_list_concat(L," ",X).
+value(ValueNode,ListNode,RemListNode):-stringCreate(PrintListNode,ListNode,RemListNode),atomic_list_concat(PrintListNode," ",ValueNode).
 
-stringCreate(PrintList, List, Rem) :- 
-    List = [H|T],
-    H \= '*',
-    stringCreate(X,T,Rem),
-    PrintList = [H|X].
-stringCreate([],List,List) :- List = [H|_], H = '*'.
+stringCreate(PrintListNode, ListNode, RemListNode) :- 
+    ListNode = [Head|Tail],
+    Head \= '*',
+    stringCreate(Final,Tail,RemListNode),
+    PrintListNode = [Head|Final].
+stringCreate([],ListNode,ListNode) :- ListNode = [Head|_], Head = '*'.
 
-assignvalue(t_assign(X,Y)) --> identifier(X), [=] ,expression(Y); identifier(X), [is], boolexp(Y).
+assignvalue(t_assign(IdentifierNode,ExpressionNode)) --> identifier(IdentifierNode), [=] ,expression(ExpressionNode); identifier(IdentifierNode), [is], boolexp(ExpressionNode).
 
-control(t_control(X,Y,Z)) --> [incase], condition(X), [do], process(Y), [otherwise], process(Z), [endcase].
+control(t_control(ConditionNode,ProcessNode,ProcessNode1)) --> [incase], condition(ConditionNode), [do], process(ProcessNode), [otherwise], process(ProcessNode1), [endcase].
 
-iterate(t_iterate(X,Y)) --> [when], condition(X), [repeat], process(Y), [endrepeat].
+iterate(t_iterate(ConditionNode,ProcessNode)) --> [when], condition(ConditionNode), [repeat], process(ProcessNode), [endrepeat].
 
-condition(t_cond_and(X,Y)) --> boolexp(X), [and], boolexp(Y).
-condition(t_cond_or(X,Y)) --> boolexp(X), [or], boolexp(Y).
-condition(t_cond_not(X)) --> [~], boolexp(X).
-condition(t_cond(X)) --> boolexp(X).
+condition(t_cond_and(ExpressionNode,ExpressionNode1)) --> boolexp(ExpressionNode), [and], boolexp(ExpressionNode1).
+condition(t_cond_or(ExpressionNode,ExpressionNode1)) --> boolexp(ExpressionNode), [or], boolexp(ExpressionNode1).
+condition(t_cond_not(ExpressionNode)) --> [~], boolexp(ExpressionNode).
+condition(t_cond(ExpressionNode)) --> boolexp(ExpressionNode).
 
-boolexp(t_boolexp_eq(X,Y)) --> expression(X), [:=:], expression(Y).
-boolexp(t_boolexp_neq(X,Y)) --> expression(X), [~=], expression(Y). 
-boolexp(t_boolexp_leq(X,Y)) --> expression(X), [<],[=], expression(Y).
-boolexp(t_boolexp_geq(X,Y)) --> expression(X), [>],[=], expression(Y).
-boolexp(t_boolexp_less(X,Y)) --> expression(X), [<], expression(Y).
-boolexp(t_boolexp_great(X,Y)) --> expression(X), [>], expression(Y).
-boolexp(t_boolexp_beq(X,Y)) --> expression(X), [:=:], boolexp(Y).
-boolexp(t_boolexp_bneq(X,Y)) --> expression(X), [~=], boolexp(Y). 
+boolexp(t_boolexp_eq(ExpressionNode,ExpressionNode1)) --> expression(ExpressionNode), [:=:], expression(ExpressionNode1).
+boolexp(t_boolexp_neq(ExpressionNode,ExpressionNode1)) --> expression(ExpressionNode), [~=], expression(ExpressionNode1). 
+boolexp(t_boolexp_leq(ExpressionNode,ExpressionNode1)) --> expression(ExpressionNode), [<],[=], expression(ExpressionNode1).
+boolexp(t_boolexp_geq(ExpressionNode,ExpressionNode1)) --> expression(ExpressionNode), [>],[=], expression(ExpressionNode1).
+boolexp(t_boolexp_less(ExpressionNode,ExpressionNode1)) --> expression(ExpressionNode), [<], expression(ExpressionNode1).
+boolexp(t_boolexp_great(ExpressionNode,ExpressionNode1)) --> expression(ExpressionNode), [>], expression(ExpressionNode1).
+boolexp(t_boolexp_beq(ExpressionNode,ExpressionNode1)) --> expression(ExpressionNode), [:=:], boolexp(ExpressionNode1).
+boolexp(t_boolexp_bneq(ExpressionNode,ExpressionNode1)) --> expression(ExpressionNode), [~=], boolexp(ExpressionNode1). 
 boolexp(t_boolexp(yes)) --> [yes].
 boolexp(t_boolexp(no)) --> [no].
 
-expression(t_add(X,Y)) --> term(X),[+],expression(Y).
-expression(t_sub(X,Y)) --> term(X),[-],expression(Y).
-expression(t_expr(X)) --> term(X).
+expression(t_add(TermNode,ExpressionNode)) --> term(TermNode),[+],expression(ExpressionNode).
+expression(t_sub(TermNode,ExpressionNode)) --> term(TermNode),[-],expression(ExpressionNode).
+expression(t_expr(TermNode)) --> term(TermNode).
 
-term(t_mul(X,Y)) --> identifier(X),[*],term(Y);numb(X),[*],term(Y);numbneg(X),[*],term(Y).
-term(t_div(X,Y)) -->identifier(X),[/],term(Y);numb(X),[/],term(Y);numbneg(X),[/],term(Y).
-term(t_mod(X,Y)) -->identifier(X),[mod],term(Y);numb(X),[mod],term(Y);numbneg(X),[mod],term(Y).
-term(t_term(X)) -->identifier(X);numb(X);numbneg(X).
+term(t_mul(IdentNumNode,TermNode)) --> identifier(IdentNumNode),[*],term(TermNode);numb(IdentNumNode),[*],term(TermNode);numbneg(IdentNumNode),[*],term(TermNode).
+term(t_div(IdentNumNode,TermNode)) -->identifier(IdentNumNode),[/],term(TermNode);numb(IdentNumNode),[/],term(TermNode);numbneg(IdentNumNode),[/],term(TermNode).
+term(t_mod(IdentNumNode,TermNode)) -->identifier(IdentNumNode),[mod],term(TermNode);numb(IdentNumNode),[mod],term(TermNode);numbneg(IdentNumNode),[mod],term(TermNode).
+term(t_term(IdentNumNode)) -->identifier(IdentNumNode);numb(IdentNumNode);numbneg(IdentNumNode).
 
-identifier(t_identifier(X)) -->[X], 
-    {string_chars(X,[H|T])}, 
-    {(is_alpha(H); X = '_')},
-    {forall(member(C,T),
-    (is_alnum(C)); C = '_')}.
+identifier(t_identifier(IdentifierNode)) -->[IdentifierNode], 
+    {string_chars(IdentifierNode,[IdentHead|IdentTail])}, 
+    {(is_alpha(IdentHead); IdentifierNode = '_')},
+    {forall(member(Char,IdentTail),
+    (is_alnum(Char)); Char = '_')}.
 
-numbneg(t_numbneg(X)) --> [-],numb(X).
-numb(t_numb(X)) --> [X],{number(X)}.
+numbneg(t_numbneg(NumNode)) --> [-],numb(NumNode).
+numb(t_numb(NumNode)) --> [NumNode],{number(NumNode)}.
