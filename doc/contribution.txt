@@ -45,8 +45,8 @@ Modified interpreter according to the features added in parser.
 Started testing with different programs for created language and added example programs for the language.
 
 Yuti Desai :
-Implemented the tokenizer for keywords, space, newline and end of File and single character identifiers.
-Added functionality to handle complex identifier names, numbers and negative numbers.
+Implemented the lexer for keywords, space, newline and end of File and single character identifiers.
+Added functionality to lexer to handle complex identifier names, numbers and negative numbers.
 Added test programs according to the parser and modified interpreter according to the features added in parser.
 Started testing and working on presentation.
 
