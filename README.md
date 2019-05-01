@@ -3,9 +3,14 @@
 This repository is for the group project of SER502.
 Compiler and Virtual Machine for a Programming Language.
 
-The language is called 'bumpy'. 
+The language is called 'bumpy'.
+
+The github link to the language is: https://github.com/maddymz/SER502-Spring2019-Team11
+The link of the youtube video is: https://youtu.be/MjIn-Y3p1kE
 
 ## System information 
+Compiler is built on Windows OS.
+
 The src (source folder) consists of the following folders - compiler and runtime.
 
 compiler/- consists of lexer_parser.pl file. It consists of the tokenizer which is used togenerate tokens for .bmy code and also defines the parser of our language which consumes the tokens to generate the parse tree. The parse tree is stored  which is output to the .bmic file (intermediate code). 
@@ -14,14 +19,15 @@ runtime/- contains of bumpy.pl whic is the combination of lexer_parser & interpr
 
 ## Instructions for Installation
 
-Requires SWI-Prolog 8.0.2 to be installed on the computer
+Requires SWI-Prolog 8.0.2 to be installed on the computer.
+Visit http://www.swi-prolog.org/download/stable and download according to your system.
 
 
 ## Directions to build and run 
 1. Download the repository to your local system.
 2. Open the SWI-Prolog runtime environment.
-3. Consult src/bumpy.pl
-5. Run - bumpy('<FILEPATH/Filename.bmy>')
+3. Consult src/bumpy.pl by going into File-> Consult and selecting the file.
+5. Run - bumpy('<FILEPATH/Filename.bmy>').
 6. This will generate an intermediate code file with .bmic extension in the data folder and execute the code. 
 
 ## Tools Used
@@ -69,5 +75,4 @@ Requires SWI-Prolog 8.0.2 to be installed on the computer
 
 
 ## Link to youtube video
-
-Link to youtube video goes here.
+https://youtu.be/MjIn-Y3p1kE

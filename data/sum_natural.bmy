@@ -1,0 +1,22 @@
+@program to calculate sum of natural numbers@
+start
+    var n;
+    var c;
+    var s;
+
+    s = 0;
+    c = 1;
+
+    show *Enter a positive integer*;
+    input n;
+
+    when c <= n
+        repeat
+            s =  s + c;
+            c = c + 1;
+        endrepeat
+    
+    show *sum is*;
+    show s;
+
+stop
