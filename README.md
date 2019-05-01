@@ -3,7 +3,7 @@
 This repository is for the group project of SER502.
 Compiler and Virtual Machine for a Programming Language.
 
-The language is called 'bumpy'. The link of the youtube video is
+The language is called 'bumpy'. 
 
 ## System information 
 The src (source folder) consists of the following folders - compiler and runtime.
