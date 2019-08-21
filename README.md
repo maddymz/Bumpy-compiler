@@ -1,4 +1,4 @@
-# SER502-Spring2019-Team11
+# Bumpy-compiler
 
 This repository is for the group project of SER502.
 Compiler and Virtual Machine for a Programming Language.
