@@ -1,9 +1,9 @@
-# Bumpy-compiler
+# Bumpy
 
 This repository is for the group project of SER502.
 Compiler and Virtual Machine for a Programming Language.
 
-The language is called 'bumpy'.
+The compiler is called 'bumpy'.
 
 The github link to the language is: https://github.com/maddymz/SER502-Spring2019-Team11
 The link of the youtube video is: https://youtu.be/MjIn-Y3p1kE
